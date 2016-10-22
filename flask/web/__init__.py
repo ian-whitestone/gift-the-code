@@ -1,18 +1,22 @@
 from flask import Flask, request, session, g
 from flask_login import current_user
 import os
-import ConfigParser
-import logging
 import re
 from jinja2 import evalcontextfilter, Markup, escape
 from datetime import timedelta
-import sqlite3
-from werkzeug.local import LocalProxy
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "dLAFKioehrgg219372TRGE032u"
 
-print app.root_path
+ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+UPLOAD_FOLDER = os.path.join(ROOT_PATH, 'data')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = ['xls', 'xlsx']
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 
 ########################### SET UP DATABASE ###############################
 # DATABASE = os.path.join(app.root_path, '../../sqlite/records.db')

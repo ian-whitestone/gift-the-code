@@ -1,0 +1,78 @@
+{% extends "header.html" %}
+
+{% block title %}Upload Data{% endblock %}
+
+{% block style %}
+.upload-drop-zone {
+    color: #ccc;
+    border-color: #ccc;
+    border-width: 2px;
+    border-style: dashed;
+    height: 200px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-valign: center;
+}
+
+#drop-zone {
+	height:200px;
+    display: table;
+    width: 100%;
+}
+
+#drop-zone span {
+    vertical-align:middle;
+    display: table-cell;
+}
+
+.upload-drop-zone.drop {
+    color: #222;
+    border-color: #222;
+}
+
+#upload-link {
+    outline: none;
+    padding: 5px;
+    border: 0px;
+    box-sizing: none;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+
+<form action="/upload_file" method="post" enctype="multipart/form-data" id="upload-form">
+    <div class="upload-drop-zone" id="drop-zone">
+        <span>
+            <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
+            <br>
+            <h3>Drag and drop your file here</h3>
+            <br>
+            or
+            <label class="btn btn-default btn-file btn-link" id="upload-link">
+                select file from computer <input type="file" style="display: none;">
+            </label>
+        </span>
+    </div>
+</form>
+
+<div class="jumbotron">
+    <h3>Guidelines</h3>
+    <p>blah blah files</p>
+</div>
+
+
+<script>
+$("#files").on("change", fileSelection);
+
+function fileSelection(e) {
+    var files = e.target.files;
+    alert(files);
+}
+
+</script>
+{% endblock %}
