@@ -120,7 +120,8 @@ var to=[-79.38558, 43.7020];
 
 var num_format = d3.format("0,000");
 
-var raw_data; //load csv data into this variable
+
+var raw_data; //load json object into this variable...
 
 var max_year;
 var min_year;
@@ -153,26 +154,22 @@ d3.select('#slider')
 .style("left",left_offset +5 + "px");
 
 
-d3.csv("map_data.csv", function(error, dataset)
-      {
-        // Convert strings to numbers.
-          dataset.forEach(function(d) {
-            d.year = +d.year;
-            d.total=+d.total;
-            d.nutrient_ratio=+d.nutrient_ratio;
-            d.perishable_ratio=+d.perishable_ratio;
-          });
-
-        raw_data=dataset;
-        update(default_year);
-        max_year = d3.max(dataset, function(d) { return d.year; });
-        min_year = d3.min(dataset, function(d) { return d.year; });
-        build_slider();
-      });
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<span>" + d.postcode + "</span>" + "<br />" + "<span>" +
+              "Type: " + d.stop_type + "</span>" + "<br />" + "<span>" +
+              "Total Food: $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
+              "Avg Nutrient Ratio: " + Math.round(d.nutrient_ratio*100)/100 + "</span>" + "<br />" + "<span>" +
+              "Avg Perishable Ratio: " + Math.round(d.perishable_ratio*100)/100 + "</span>";
+    // return "<span style='color:black'>" + d.street_address + "</span>";
+  });
 
 
 var tile = d3.geo.tile()
-    .size([width, height]);
+.size([width, height]);
+
 
 var projection = d3.geo.mercator()
     .scale((1 << 20) / 2 / Math.PI)
@@ -211,18 +208,10 @@ var layer = map.append("div")
 var info = map.append("div")
     .attr("class", "info");
 
-var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .offset([-10, 0])
-  .html(function(d) {
-    return "<span>" + d.postcode + "</span>" + "<br />" + "<span>" +
-              "Type: " + d.stop_type + "</span>" + "<br />" + "<span>" +
-              "Total Food: $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
-              "Avg Nutrient Ratio: " + Math.round(d.nutrient_ratio*100)/100 + "</span>" + "<br />" + "<span>" +
-              "Avg Perishable Ratio: " + Math.round(d.perishable_ratio*100)/100 + "</span>";
-    // return "<span style='color:black'>" + d.street_address + "</span>";
-  });
-
+update(default_year);
+max_year = d3.max(raw_data, function(d) { return d.year; });
+min_year = d3.min(raw_data, function(d) { return d.year; });
+build_slider();
 
 points.call(tip);
 zoomed();
