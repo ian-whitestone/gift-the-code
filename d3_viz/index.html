@@ -115,12 +115,15 @@ var left_offset=10, //50 //inherently sets the margin
     height = Math.max(500, window.innerHeight) - margin;
     prefix = prefixMatch(["webkit", "ms", "Moz", "O"]);
 
-var default_year=2011;//start at 2011
+var default_year=2010;//start at 2010
 var to=[-79.38558, 43.7020];
 
 var num_format = d3.format("0,000");
 
 var raw_data; //load csv data into this variable
+
+var max_year;
+var min_year;
 
 var color_keys;
 
@@ -129,20 +132,25 @@ var rscale; //scale for circle radius to keep max radius constant across each ye
 
 var color_scale = d3.scale.category10();
 
-// Initialize slider
-var slider_axis = d3.svg.axis().orient("bottom").tickFormat(d3.format("d")).ticks(3);
-var slider = d3.slider().axis(slider_axis).min(2011).max(2013)
-            .step(1).value(default_year)
-            .on("slide", function(evt, year) {
-            update(year);
-            });
+
+function build_slider() {
+  slider_axis = d3.svg.axis().orient("bottom").tickFormat(d3.format("d")).ticks(max_year-min_year+1);
+
+  slider = d3.slider().axis(slider_axis).min(min_year).max(max_year)
+              .step(1).value(default_year)
+              .on("slide", function(evt, year) {
+              update(year);
+              });
+
+  d3.select('#slider').call(slider);
+
+}
 
 // Render the slider in the div
 d3.select('#slider')
 .style("width",width/3+"px")
 .style("top",top_offset - 25 +"px")
-.style("left",left_offset + "px")
-.call(slider);
+.style("left",left_offset +5 + "px");
 
 d3.csv("map_data.csv", function(error, dataset)
       {
@@ -156,6 +164,9 @@ d3.csv("map_data.csv", function(error, dataset)
 
         raw_data=dataset;
         update(default_year);
+        max_year = d3.max(dataset, function(d) { return d.year; });
+        min_year = d3.min(dataset, function(d) { return d.year; });
+        build_slider();
       });
 
 
