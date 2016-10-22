@@ -21,7 +21,7 @@ def insert_query(conn, query, data, multiple):
 
 def insert_dict_query(conn, query, data, fields, multiple):
     cur = conn.cursor()
-    tuples = [(d[field] for field in fields) for d in data]
+    tuples = [tuple([d[field] for field in fields]) for d in data]
     if multiple:  # data is a list of tuples
         cur.executemany(query, tuples)
     else:  # data is a single tuple
