@@ -41,9 +41,6 @@ def get_map_data():
     jason=grouped_df.reset_index().to_json(orient='records')
     jason=json.loads(jason)
     conn.close()
-
-    print(len(jason))
-    print(jason[0],'\n',jason[2])
     
     return jason
 
