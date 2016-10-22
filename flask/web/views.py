@@ -49,7 +49,6 @@ def generate_report():
         # do some stuff
         return jsonify(result='Success')
     except Exception as e:
-        print "ERROR!!! {error}: {msg}".format(error=type(e).__name__, msg=str(e))
         flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
                      "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
         return jsonify(result='Error')
