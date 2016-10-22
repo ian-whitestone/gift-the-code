@@ -140,7 +140,7 @@ def main():
             dbo.insert_query(conn, query, loc_data, True)
             print('%s records historized' % len(loc_data.keys()))
         else:
-            print ('noTHING historized')
+            print ('nuttin historized')
         break
     conn.close()
     return parsed_data
