@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    {% block head %}
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/second-harvest-logo.png') }}">
+
+    <title>{% block title %}{% endblock %} &mdash; Second Harvest (Gift the Code)</title>
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" />
+
+	{% block css %}{% endblock %}
+
+
+    <!-- CUSTOM STYLE STUFF -->
+    <style type="text/css">
+        a {	text-decoration: none !important; }
+
+
+        /* ----------- Navbar Styles --------------- */
+        .navbar {
+            background-color: transparent;
+            background: transparent;
+            border-color: transparent;
+            padding: 20px 0 0 0;
+			min-height: 50px;
+        }
+
+        .navbar li { color: #000 }
+
+		body {
+			min-height: 2000px;
+			padding-top: 90px;
+		}
+        /* ------------------------------------------------ */
+
+        {% block style %}{% endblock %}
+    </style>
+
+    {% endblock %}
+</head>
+
+<body>
+
+<nav id="topNav" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
+                <!--<span class="sr-only">Toggle</span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+            <!--</button>-->
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/second-harvest-logo.png') }}" style="height:50px">
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <!--<ul class="nav navbar-nav">-->
+                <!--<li>&nbsp;&nbsp;&nbsp;</li>-->
+                <!--<li id="fooddata-tab"><a href="{{ url_for('SH_data.FoodData') }}">Food Data</a></li>-->
+            <!--</ul>-->
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                    <li><a href="#">Upload New Data</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+	<!-- Display flashed messages -->
+	<div id="flash_alerts">
+		{% with msgs = get_flashed_messages(with_categories=true) %}
+			{% if msgs %}
+				{%- for category, msg in msgs %}
+					<div class="alert alert-{{category}} fade in" role="alert">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						{{ msg }}
+					</div>
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
+	</div>
+
+	{% block page_header %}{% endblock %}
+	{% block content %}{% endblock %}
+</div>
+
+
+<!-- jQuery library -->
+<script src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	 -->
+
+<!-- Bootstrap JavaScript -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% block javascript %}{% endblock %}
+
+
+<script>
+var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+// Tooltips
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+// Dropdown
+$(document).ready(function () {
+    $('.dropdown-toggle').dropdown();
+});
+</script>
+
+</body>
+
+</html>
