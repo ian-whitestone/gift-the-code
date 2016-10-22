@@ -134,9 +134,10 @@ def main():
         location_dict=locations.parse_location_data(location_data)
 
         ##insert new location data into 'postal' table
-        loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
-        query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
-        dbo.insert_query(conn, query, loc_data, True)
+        if location_dict:
+            loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
+            query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
+            dbo.insert_query(conn, query, loc_data, True)
 
     conn.close()
     return parsed_data
@@ -153,8 +154,8 @@ def loc_hist_test():
     conn.close()
     return
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
 
 
 
