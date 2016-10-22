@@ -31,4 +31,32 @@ def get_location_data(addr):
         pass
     return None
 
-# get_coords('M4Y 1N2')
+def parse_location_data(data): ##data is in form {postal_code:response_dict}
+
+    location_data={}
+
+    for postal_code,loc in data.items():
+        location_data[postal_code]={}
+        location_data[postal_code]['latitude']=loc[0]['geometry']['location']['lat']
+        location_data[postal_code]['longitude']=loc[0]['geometry']['location']['lng']
+
+        loc_data = loc[0]['address_components']
+        for d in loc_data:
+            if 'neighborhood' in d['types']:
+                location_data[postal_code]['neighborhood']=d['long_name']
+            elif 'locality' in d['types']:
+                location_data[postal_code]['locality']=d['long_name']
+
+        ##insert Nulls for missing values
+        if 'neighborhood' not in location_data[postal_code].keys():
+            location_data[postal_code]['neighborhood']=None
+        if 'locality' not in location_data[postal_code].keys():
+            location_data[postal_code]['locality']=None
+
+    return location_data ##dictionary ready for historizing
+
+
+def historize_location_data(data): #data is the parsed excel data...
+    ##get list of unique postal codes..
+
+    return
