@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
 
     <!-- FontAwesome CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome-4.6.3/css/font-awesome.min.css') }}" />
 
 	{% block css %}{% endblock %}
 
@@ -39,13 +39,15 @@
             font-size: 20px;
         }
 
-        #navlogin a {
+        #navlogin a,
+        #navlogout a {
             color: #6DB446;
             font-weight: 500;
             letter-spacing: 1px;
         }
 
-        #navupload a {
+        #navupload a,
+        #navreport a {
             color: #ed8c3e;
             font-weight: 500;
             letter-spacing: 1px;
@@ -128,8 +130,12 @@
             <!--</ul>-->
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
-                    <li id="navupload"><a href="#">Upload New Data</a></li>
-                    <li id="navlogin"><a href="/logout">Logout</a></li>
+                    {% if request.url_rule.endpoint=='SH_data.FoodData' %}
+                        <li id="navupload"><a href="{{ url_for('SH_data.UploadData') }}">Upload New Data</a></li>
+                    {% else %}
+                        <li id="navreport"><a href="{{ url_for('SH_data.FoodData') }}">View Current Reports</a></li>
+                    {% endif %}
+                    <li id="navlogout"><a href="/logout">Logout</a></li>
                 {% else %}
                     <li id="navlogin"><a href="/login">Login</a></li>
                 {% endif %}
@@ -141,18 +147,19 @@
 
 <div class="container">
 	<!-- Display flashed messages -->
-	<div id="flash_alerts">
-		{% with msgs = get_flashed_messages(with_categories=true) %}
-			{% if msgs %}
+	{% with msgs = get_flashed_messages(with_categories=true) %}
+		{% if msgs %}
+			<div id="flash_alerts">
 				{%- for category, msg in msgs %}
 					<div class="alert alert-{{category}} fade in" role="alert">
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 						{{ msg }}
 					</div>
 				{% endfor -%}
-			{% endif %}
-		{% endwith %}
-	</div>
+			</div>
+		{% endif %}
+	{% endwith %}
+
 
 	{% block page_header %}{% endblock %}
 	{% block content %}{% endblock %}
