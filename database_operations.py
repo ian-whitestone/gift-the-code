@@ -49,8 +49,9 @@ def select_query(conn, query, data=False):
     else:
         cur.execute(query)
         resultset = cur.fetchall()
+    colnames = [desc[0] for desc in cur.description]
     cur.close()
-    return resultset
+    return resultset,colnames
 
 
 def parse_date(s):

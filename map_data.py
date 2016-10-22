@@ -1,6 +1,7 @@
 import database_operations as dbo
 import pandas as pd
 import numpy as np
+import json
 
 
 def perishable_ratio(df):
@@ -19,9 +20,11 @@ def get_map_data():
     ##query db
     conn=dbo.db_connect()
     query="SELECT a.*,b.long,b.lat,b.neighbourhood,b.locality FROM data as a JOIN postal as b ON a.postcode=b.postcode"
-    resultset=dbo.select_query(conn,query)
+    resultset,colnames=dbo.select_query(conn,query)
 
     ##convert resultset to dataframe
+    df=pd.DataFrame(resultset, columns=colnames)
+
 
     ##filter out rows missing postal codes
     df=df[df['postcode'].notnull()]
@@ -35,10 +38,16 @@ def get_map_data():
 
     #get summary df
     grouped_df=df.groupby(['stop_type','year','postcode','long','lat','neighbourhood','locality']).agg({'total':np.sum,'nutrient_ratio':np.mean,'perishable_ratio':np.mean}).reset_index()
+    jason=grouped_df.reset_index().to_json(orient='records')
+    jason=json.loads(jason)
     conn.close()
-    return
+
+    print(len(jason))
+    print(jason[0],'\n',jason[2])
+    
+    return jason
 
 
 ##IAN TO DO
 
-##finish map_data_function --> convert resultset to dataframe...test functionality in AWS
+##change map function to take in json

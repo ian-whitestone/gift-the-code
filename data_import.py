@@ -97,7 +97,7 @@ def main():
         ###get location data from google geocode api
         ##read existing postal_codes
         query="SELECT postcode FROM postal"
-        historized_pcs=[result[0] for result in dbo.select_query(conn,query)]
+        historized_pcs=[result[0] for result,colnames in dbo.select_query(conn,query)]
 
         ##get postal_codes thats havent been historized already
         postal_codes=list(set([data[-1] for data in parsed_data if data[-1] not in historized_pcs]))
