@@ -3,229 +3,131 @@
 <html lang="en">
 
 <head>
-	{% block head %}
+    {% block head %}
 
-	<link rel="shortcut icon" href="{{ url_for('static', filename='img/second-harvest-logo.png') }}">
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>{% block title %}{% endblock %} &mdash; Second Harvest (Gift the Code)</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/second-harvest-logo.png') }}">
 
-	{% block css %}
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-	
-	<!-- DataTables CSS -->
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/t/bs-3.3.6/pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2,fh-3.1.1,se-1.1.2/datatables.min.css"/>
-
-	<!-- FontAwesome CSS -->
-	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.css" />
-
-	<!-- DataTables FontAwesome CSS -->
-	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/1.10.11/integration/font-awesome/dataTables.fontAwesome.css" />
-	{% endblock %}
-
-	{% block javascript %}
-	<!-- jQuery library -->
-	<script src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
-	<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	 -->
-
-	<!-- Bootstrap JavaScript -->
-	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-	<!-- DataTables Bootstrap JavaScript -->
-	<script src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>
-
-	<!-- DataTables JavaScript -->
-	<script type="text/javascript" src="https://cdn.datatables.net/t/bs-3.3.6/pdfmake-0.1.18,dt-1.10.11,b-1.1.2,b-flash-1.1.2,b-html5-1.1.2,b-print-1.1.2,fh-3.1.1,se-1.1.2/datatables.min.js"></script>
-
-	<script type="text/javascript">
-		//<!-- Check Nav height to move down page content -->
-		function addTopPadding() {
-			var h = $('#topNav').height() + 20;
-			var hpx = h.toString() + "px";
-		
-			document.body.style.paddingTop = hpx;
-		}
-
-		//<!-- get current URL path and assign 'active' class to TopNav bar -->
-		function activeNavTab() {
-			var pathname = window.location.pathname;
-			if (pathname.indexOf('/data/') != -1) {
-				$('#fooddata-tab').addClass('active');
-			}
-		}
-	</script>
-	{% endblock %}
-
-	<!-- CUSTOM STYLE STUFF -->
-	<style type="text/css">
-		a {	text-decoration: none !important; }
-
-		/* ----------- Login Dropdown styles -------------- */
-		#login-dp{
-			min-width: 250px;
-			padding: 14px 14px 0;
-			overflow:hidden;
-			background-color:rgba(255,255,255,1);
-		}
-		/* ------------------------------------------------ */
+    <title>{% block title %}{% endblock %} &mdash; Second Harvest (Gift the Code)</title>
 
 
-		/* ------------- DataTable styles ----------------- */
-		div.dataTables_processing { z-index: 1; }
-		/* ------------------------------------------------ */
-		
-		
-		/* ----------- Sticky footer styles --------------- */
-		html {
-			position: relative;
-			min-height: 100%;
-		}
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" />
+
+	{% block css %}{% endblock %}
+
+
+    <!-- CUSTOM STYLE STUFF -->
+    <style type="text/css">
+        a {	text-decoration: none !important; }
+
+
+        /* ----------- Navbar Styles --------------- */
+        .navbar {
+            background-color: transparent;
+            background: transparent;
+            border-color: transparent;
+            padding: 20px 0 0 0;
+			min-height: 50px;
+        }
+
+        .navbar li { color: #000 }
+
 		body {
-			/* Margin bottom by footer height */
-			margin-bottom: 50px;
+			min-height: 2000px;
+			padding-top: 90px;
 		}
-		.footer {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			/* Set the fixed height of the footer here */
-			height: 30px;
-			background-color: #f5f5f5;
-		}
-		.container .text-muted {
-			margin: 5px 0;
-		}
-		/* ------------------------------------------------ */
+        /* ------------------------------------------------ */
 
-		{% block style %}{% endblock %}
-	</style>
+        {% block style %}{% endblock %}
+    </style>
 
-	{% endblock %}
+    {% endblock %}
 </head>
 
-<body onresize="addTopPadding()">
+<body>
 
 <nav id="topNav" class="navbar navbar-default navbar-fixed-top">
-	<div class="container">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a href="/">
-				<img src="{{ url_for('static', filename='img/second-harvest-logo.png') }}" style="height:50px">
-			</a>
-		</div>
-		<div id="navbar" class="navbar-collapse collapse">
-			<ul class="nav navbar-nav">
-				<li>&nbsp;&nbsp;&nbsp;</li>
-				<li id="fooddata-tab"><a href="{{ url_for('SH_data.FoodData') }}">Food Data</a></li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-				  	<a href="#" class="dropdown-toggle" data-toggle="dropdown" id="user-toggle">
-						<span class="glyphicon glyphicon-user"></span>
-						<span id="user_id">
-						{% if current_user.is_authenticated %}
-							{{ current_user.id }}
-						{% else %}
-							New User
-						{% endif %}
-						</span>
-						<span class="caret"></span>
-					</a>
-					<ul id="login-dp" class="dropdown-menu">
-						<li>
-							 <div class="row">
-								 <div class="col-md-12">
-									 {% if current_user.is_authenticated %}
-									 <form class="form" role="form" method="post" action="/logout">
-										 <div class="form-group">
-											 <button type="submit" class="btn btn-primary btn-block" name="sign-out-endpoint" value="{{request.url_rule.endpoint}}">Sign Out</button>
-										 </div>
-									 </form>
-									 {% else %}
-									 <form class="form" role="form" method="post" action="/login" accept-charset="UTF-8" id="login-nav" autocomplete="off">
-										 <div class="form-group">
-											 <label class="sr-only" for="username">Username</label>
-											 <input type="text" class="form-control" id="username" name="username" value="{{request.form.username }}" placeholder="Enter Username" autofocus="autofocus" required>
-										 </div>
-										 <!--<div class="checkbox">
-											 <label>
-												 <input type="checkbox"> Remember Me
-											 </label>
-										 </div>-->
-										 <div class="form-group">
-											 <button type="submit" class="btn btn-primary btn-block" name="sign-in-endpoint" value="{{request.url_rule.endpoint}}">Sign In</button>
-										 </div>
-									 </form>
-									 {% endif %}
-								 </div>
-							 </div>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-	</div>
+    <div class="container">
+        <div class="navbar-header">
+            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
+                <!--<span class="sr-only">Toggle</span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+            <!--</button>-->
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/second-harvest-logo.png') }}" style="height:50px">
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <!--<ul class="nav navbar-nav">-->
+                <!--<li>&nbsp;&nbsp;&nbsp;</li>-->
+                <!--<li id="fooddata-tab"><a href="{{ url_for('SH_data.FoodData') }}">Food Data</a></li>-->
+            <!--</ul>-->
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                    <li><a href="#">Upload New Data</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                {% else %}
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>
 
-<script>
-	addTopPadding();
-	activeNavTab();
-</script>
 
-<div id="wrap">
 <div class="container">
-	<div class="content">
-
-		<!-- Display flashed messages -->
-		<div id="flash_alerts">
-			{% with msgs = get_flashed_messages(with_categories=true) %}
-				{% if msgs %}
-					{%- for category, msg in msgs %}
-						<div class="alert alert-{{category}} fade in" role="alert">
-							<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-							{{ msg }}
-						</div>
-					{% endfor -%}
-				{% endif %}
-			{% endwith %}
-		</div>
-
-		{% block page_header %}{% endblock %}
-		{% block content %}{% endblock %}
-
+	<!-- Display flashed messages -->
+	<div id="flash_alerts">
+		{% with msgs = get_flashed_messages(with_categories=true) %}
+			{% if msgs %}
+				{%- for category, msg in msgs %}
+					<div class="alert alert-{{category}} fade in" role="alert">
+						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+						{{ msg }}
+					</div>
+				{% endfor -%}
+			{% endif %}
+		{% endwith %}
 	</div>
+
+	{% block page_header %}{% endblock %}
+	{% block content %}{% endblock %}
 </div>
-</div>
-<!--<img src="{{ url_for('static', filename='img/underconstruction.gif') }}" class="center-block">-->
-<footer class="footer">
-	<div class="container" valign="center">
-		<p class="text-muted" align="center">
-			<a href="https://github.com/ian-whitestone/giftthecode" target="_blank"><i class="fa fa-github-alt"></i>  GitHub</a> |
-			<a href="mailto:ianjameswhitestone@gmail.com&subject=[Gift the Code]"><small><i class="fa fa-envelope"></i></small>  Email Us</a>
-		</p>
-	</div>
-</footer>
+
+
+<!-- jQuery library -->
+<script src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	 -->
+
+<!-- Bootstrap JavaScript -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% block javascript %}{% endblock %}
+
 
 <script>
 var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
 // Tooltips
 $(document).ready(function(){
-	$('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 // Dropdown
 $(document).ready(function () {
-	$('.dropdown-toggle').dropdown();
+    $('.dropdown-toggle').dropdown();
 });
 </script>
+
 </body>
 
 </html>

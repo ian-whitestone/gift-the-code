@@ -23,10 +23,9 @@ class HomePage(MethodView):
 
 
 class FoodData(MethodView):
-    def get(self):
-        if current_user is not None and current_user.is_authenticated:
-            flash('HELLO USER', 'success')
+    decorators = [login_required]
 
+    def get(self):
         return render_template('food_data.html')
 
 

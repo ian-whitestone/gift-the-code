@@ -8,8 +8,8 @@ class User(UserMixin):
             https://flask-login.readthedocs.org/en/latest/_modules/flask_login.html#UserMixin
     '''
 
-    def __init__(self, uid):
-        self.id = uid
+    def __init__(self, username):
+        self.id = username
 
     @classmethod
     def get(self, id):
