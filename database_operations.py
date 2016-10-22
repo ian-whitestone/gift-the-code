@@ -3,10 +3,8 @@ import datetime
 
 
 def db_connect():
-    conn = psycopg2.connect(host='localhost',
-                            port=5432,
-                            database='postgres')
-
+    conn = psycopg2.connect(database='postgres',
+                            user='centos')
     return conn
 
 
