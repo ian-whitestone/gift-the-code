@@ -138,7 +138,10 @@ def main():
             loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
             query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
             dbo.insert_query(conn, query, loc_data, True)
-
+            print('%s records historized' % len(loc_data.keys()))
+        else:
+            print ('noTHING historized')
+        break
     conn.close()
     return parsed_data
 
