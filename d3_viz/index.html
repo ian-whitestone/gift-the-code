@@ -107,8 +107,8 @@ body {
 
 
 //define global variables
-var left_offset=300, //inherently sets the margin
-    top_offset=100,
+var left_offset=50, //inherently sets the margin
+    top_offset=50,
     width_margin=1.25*left_offset,
     margin=125,
     width = Math.max(960, window.innerWidth) - width_margin,
@@ -139,8 +139,8 @@ var slider = d3.slider().axis(slider_axis).min(2011).max(2013)
 
 // Render the slider in the div
 d3.select('#slider')
-.style("width",width+"px")
-.style("top",top_offset - 30 +"px")
+.style("width",width/3+"px")
+.style("top",top_offset - 25 +"px")
 .style("left",left_offset + "px")
 .call(slider);
 
@@ -199,54 +199,15 @@ var layer = map.append("div")
 var info = map.append("div")
     .attr("class", "info");
 
-var title = d3.select("body")
-    .append("div")
-    .attr("id","title")
-    .style("position", "absolute")
-    .style("top", -5 + "px")
-    .style("font-family","sans-serif")
-    .style("font-size","18px")
-    .html('<h1>mangossssssssss</h1>');
-
-var title_width = (document.getElementById("title").clientWidth + 1);
-
-d3.select("#title")
-  .style("left", left_offset+width/2-title_width/2 + "px");
-
-var legend_title = d3.select("body").append("svg")
-	.attr("width", 200)
-	.attr("height", 100)
-	.attr("id","legend_title")
-  .style("position", "absolute")
-  // .style("top", top_offset+"px")
-  .style("top", 10+"px")
-  .style("left",50+"px")
-  .append("text")
-	.attr("dy", ".35em")
-  .attr("x", 70)
-	.attr("y", 9)
-  .style("font-size","18px")
-	.style("text-anchor", "middle")
-	.style("font-weight", "bold")
-	.text("Infraction Type");
-
-var legend = d3.select("body").append("svg")
-	.attr("width", 300)
-  .style("position", "absolute")
-  .style("top", 20+"px")
-  .style("left",10+"px")
-	.attr("height", 700)
-	.attr("class","legend");
-
 var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
     return "<span>" + d.postcode + "</span>" + "<br />" + "<span>" +
-              "Total Revenue: $" + num_format(d.fine_sum) + "</span>" + "<br />" + "<span>" +
-              "Tickets/day: " + Math.round(d.count/365*100)/100 + "</span>" + "<br />" + "<span>" +
-
-              "Infraction Type: " + d.infraction_code + "</span>";
+              "Type: " + d.stop_type + "</span>" + "<br />" + "<span>" +
+              "Total Food (lbs): $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
+              "Avg Nutrient Ratio: " + Math.round(d.nutrient_ratio*100)/100 + "</span>" + "<br />" + "<span>" +
+              "Avg Perishable Ratio: " + Math.round(d.perishable_ratio*100)/100 + "</span>";
     // return "<span style='color:black'>" + d.street_address + "</span>";
   });
 
@@ -259,21 +220,20 @@ function update(year) {
           return d.year == year;});
 
   //get list of unique infraction_code's for given year
-  infrac_cds=d3.map(data, function(d){return d.infraction_code;}).keys();
+  infrac_cds=d3.map(data, function(d){return d.stop_type;}).keys();
 
   //map the new domain to the color scale
   color_scale=color_scale.domain(infrac_cds)
 
-  max = d3.max(data, function(d) { return d.fine_sum; });
-  min = d3.min(data, function(d) { return d.fine_sum; });
+  max = d3.max(data, function(d) { return d.total; });
+  min = d3.min(data, function(d) { return d.total; });
 
   //redefine scale based on new data
   rscale = d3.scale.linear()
   .domain([min,max])
-  .range([0.0000005,0.00001]); //custom max/zoom.scale & min/zoom.scale values //[0.00000018,0.00000852]
+  .range([0.0000005,0.00005]); //custom max/zoom.scale & min/zoom.scale values //[0.00000018,0.00000852]
 
   add_circles(data);
-  build_legend();
 }
 
 function add_circles(dataset) {
@@ -284,44 +244,16 @@ function add_circles(dataset) {
   .attr("cx", function(d) {return projection([d.long,d.lat])[0]})
   .attr("cy", function(d) {return projection([d.long,d.lat])[1]})
   .attr("r",1)
-	.style("fill", function(d) {return color_scale(d.infraction_code)})
+	.style("fill", function(d) {return color_scale(d.stop_type)})
   .on('mouseover', tip.show)
   .on('mouseout', tip.hide);
 
   // d3.selectAll("circle")
   //     .transition().duration(2000)
-  //     .attr("r", function(d) {return rscale(d.fine_sum)*zoom.scale()});
+  //     .attr("r", function(d) {return rscale(d.total)*zoom.scale()});
 
   zoomed();
 }
-
-
-//build legend pane
-function build_legend(){
-
-  var node_size=15;
-
-  var legend_node = legend.selectAll(".node")
-  			.attr("class","node")
-  			.data(infrac_cds)
-  			.enter().append("g")
-        .attr("transform", function(d, i) {return "translate(0," + (i+1) * (node_size*1.5) + ")";});
-
-  		legend_node.append("rect")
-  			.attr("class","node")
-  			.attr("width", node_size)
-        .attr("height", node_size)
-  			.style("fill", function(d) {return color_scale(d);});
-
-  		legend_node.append("text")
-  			.attr("class","node")
-  			.attr("x", 20)
-  			.attr("y", node_size/2)
-  			.attr("dy", ".35em")
-  			// .text(function(d) {
-        //   legend_str=d+": "+fine_amts[d]['fine_descp']+" - $"+fine_amts[d]['fine_amt'];
-        //   return legend_str; });
-  }
 
 function zoomed() {
 
@@ -338,11 +270,11 @@ function zoomed() {
         .attr("cx", function(d) {return projection([d.long,d.lat])[0]})
 				.attr("cy", function(d) {return projection([d.long,d.lat])[1]})
         // .transition().duration(2000)
-        .attr("r", function(d) {return rscale(d.fine_sum)*zoom.scale()});
+        .attr("r", function(d) {return rscale(d.total)*zoom.scale()});
 
   var image = layer
       .style(prefix + "transform", matrix3d(tiles.scale, tiles.translate))
-    .selectAll(".tile")
+      .selectAll(".tile")
       .data(tiles, function(d) { return d; });
 
   image.exit()
