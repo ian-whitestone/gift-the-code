@@ -1,14 +1,10 @@
-import general_utils as Ugen
 import psycopg2
 
 
 def db_connect():
-    login = Ugen.ConfigSectionMap('db')
-    conn = psycopg2.connect(host='ec2-54-164-197-93.compute-1.amazonaws.com',
+    conn = psycopg2.connect(host='localhost',
                             port=5432,
-                            database='dfs',
-                            user=login['user'],
-                            password=login['password'])
+                            database='postgres')
 
     return conn
 
