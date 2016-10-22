@@ -141,7 +141,6 @@ def main():
             print('%s records historized' % len(loc_data.keys()))
         else:
             print ('nuttin historized')
-        break
     conn.close()
     return parsed_data
 
