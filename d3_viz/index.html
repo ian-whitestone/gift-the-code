@@ -107,9 +107,9 @@ body {
 
 
 //define global variables
-var left_offset=50, //inherently sets the margin
+var left_offset=10, //50 //inherently sets the margin
     top_offset=50,
-    width_margin=1.25*left_offset,
+    width_margin=3*left_offset,
     margin=125,
     width = Math.max(960, window.innerWidth) - width_margin,
     height = Math.max(500, window.innerHeight) - margin;
@@ -122,7 +122,7 @@ var num_format = d3.format("0,000");
 
 var raw_data; //load csv data into this variable
 
-var infrac_cds;
+var color_keys;
 
 //circles sized by total revenue which varies year by year
 var rscale; //scale for circle radius to keep max radius constant across each year
@@ -205,7 +205,7 @@ var tip = d3.tip()
   .html(function(d) {
     return "<span>" + d.postcode + "</span>" + "<br />" + "<span>" +
               "Type: " + d.stop_type + "</span>" + "<br />" + "<span>" +
-              "Total Food (lbs): $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
+              "Total Food: $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
               "Avg Nutrient Ratio: " + Math.round(d.nutrient_ratio*100)/100 + "</span>" + "<br />" + "<span>" +
               "Avg Perishable Ratio: " + Math.round(d.perishable_ratio*100)/100 + "</span>";
     // return "<span style='color:black'>" + d.street_address + "</span>";
@@ -220,10 +220,10 @@ function update(year) {
           return d.year == year;});
 
   //get list of unique infraction_code's for given year
-  infrac_cds=d3.map(data, function(d){return d.stop_type;}).keys();
+  color_keys=d3.map(data, function(d){return d.stop_type;}).keys();
 
   //map the new domain to the color scale
-  color_scale=color_scale.domain(infrac_cds)
+  color_scale=color_scale.domain(color_keys)
 
   max = d3.max(data, function(d) { return d.total; });
   min = d3.min(data, function(d) { return d.total; });
