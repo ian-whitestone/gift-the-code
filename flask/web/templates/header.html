@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
 
     <!-- FontAwesome CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome-4.6.3/css/font-awesome.min.css') }}" />
 
 	{% block css %}{% endblock %}
 
@@ -42,7 +42,7 @@
 
 		body {
 			min-height: 2000px;
-			padding-top: 90px;
+			padding-top: 110px;
 		}
         /* ------------------------------------------------ */
 
@@ -74,7 +74,11 @@
             <!--</ul>-->
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
-                    <li><a href="#">Upload New Data</a></li>
+                    {% if request.url_rule.endpoint=='SH_data.FoodData' %}
+                        <li><a href="{{ url_for('SH_data.UploadData') }}">Upload New Data</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('SH_data.FoodData') }}">View Current Reports</a></li>
+                    {% endif %}
                     <li><a href="/logout">Logout</a></li>
                 {% else %}
                     <li><a href="/login">Login</a></li>
@@ -87,18 +91,19 @@
 
 <div class="container">
 	<!-- Display flashed messages -->
-	<div id="flash_alerts">
-		{% with msgs = get_flashed_messages(with_categories=true) %}
-			{% if msgs %}
+	{% with msgs = get_flashed_messages(with_categories=true) %}
+		{% if msgs %}
+			<div id="flash_alerts">
 				{%- for category, msg in msgs %}
 					<div class="alert alert-{{category}} fade in" role="alert">
 						<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 						{{ msg }}
 					</div>
 				{% endfor -%}
-			{% endif %}
-		{% endwith %}
-	</div>
+			</div>
+		{% endif %}
+	{% endwith %}
+
 
 	{% block page_header %}{% endblock %}
 	{% block content %}{% endblock %}
