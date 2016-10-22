@@ -3,7 +3,7 @@ import xlsxwriter
 import os
 import datetime
 import pandas as pd
-
+import database_operations as dbo
 
 def read_data(src):
     data =[]
@@ -89,8 +89,10 @@ def main():
     src_files = [f for f in os.listdir('data') if f[-1] in 'Xx']
     for src in src_files:
         data=read_data(src)
-        parsed_data=parse_data_mod(data)
-        break
+        parsed_data=parse_data(data) ##list of tuples
+        conn=dbo.db_connect()
+        query='INSERT INTO data VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+        dbo.insert_query(conn, query, parsed_data, True)
     return parsed_data
 
 # data=main()
