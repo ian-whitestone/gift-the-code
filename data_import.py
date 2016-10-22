@@ -63,12 +63,10 @@ def main():
     for src in src_files:
         data=read_data(src)
         parsed_data=parse_data(data)
-        print (len(parsed_data))
-        print (parsed_data[1])
         break
-    return
+    return parsed_data
 
-main()
+# main()
 
 ###TO DO
 ##raise exception if columns are not matching expected type
