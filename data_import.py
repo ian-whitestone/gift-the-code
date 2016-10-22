@@ -146,9 +146,14 @@ def loc_hist_test():
     with open('loc_data.json', 'r') as fp:
         location_dict = json.load(fp)
 
+    query="SELECT postcode FROM postal"
+    historized_pcs=[result[0] for result in dbo.select_query(conn,query)]
+    print(len(historized_pcs))
+
     loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
-    query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
-    dbo.insert_query(conn, query, loc_data, True)
+    print(len(loc_data))
+    # query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
+    # dbo.insert_query(conn, query, loc_data, True)
     conn.close()
     return
 
