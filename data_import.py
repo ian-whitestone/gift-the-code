@@ -1,8 +1,6 @@
 import xlrd
-import xlsxwriter
 import os
 import datetime
-import pandas as pd
 import database_operations as dbo
 
 
@@ -122,6 +120,8 @@ def main():
         dbo.insert_query(conn, query, parsed_data, True)
     return parsed_data
 
+if __name__ == '__main__':
+    main()
 # data=main()
 #
 # headers=['date', 'trans_type', 'route_desc', 'stop_type','source_type','driver', 'donor_id', 'arrive', 'depart', 'bread', 'baked', 'dairy', 'produce', 'protein', 'prepared', 'bev_juice', 'bev_other', 'snack', 'non_perish', 'non_food', 'quality', 'zero_lbs', 'postcode']
