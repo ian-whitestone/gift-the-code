@@ -1,0 +1,38 @@
+{% extends "header.html" %}
+
+{% block title %}Food Data{% endblock %}
+
+{% block style %}
+th.dt-center, td.dt-center { text-align: center; }
+th.dt-right, td.dt-right { text-align: right; }
+
+[disabled] {
+  pointer-events: none;
+}
+{% endblock %}
+
+{% block page_header %}
+<!--<h2>Food Data</h2>-->
+<br>
+{% endblock %}
+
+{% block content %}
+
+{% if not current_user.is_authenticated %}
+    <div class="alert alert-warning" role="alert">
+    Please sign in!
+    </div>
+    <!--<br>-->
+{% endif %}
+
+<legend>Second Harvest Food Data</legend>
+
+<p>HELLO WORLD!</p>
+
+
+<script>
+$(document).ready(function() {
+});
+
+</script>
+{% endblock %}
