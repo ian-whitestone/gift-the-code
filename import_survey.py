@@ -81,4 +81,4 @@ if __name__ == '__main__':
     fields = ['response_id', 'donor_id', 'reas_1', 'reas_2', 'reas_3', 'effect', 'clients', 'children_perc', 'youth_perc', 'men_perc', 'women_perc', 'senior_perc', 'perc_provided',
               'nps_office', 'nps_driver', 'nps_agency', 'nps_workshop', 'crucial_to_success', 'healthy_and_nutritious', 'diverse', 'expanded_programs', 'more_opportunities']
     dbo.insert_dict_query(
-        conn, "INSERT INTO survey VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", d, fields, multiple=True)
+        conn, "INSERT INTO survey VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", d, fields, multiple=True)
