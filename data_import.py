@@ -2,7 +2,8 @@ import xlrd
 import os
 import datetime
 import database_operations as dbo
-
+import locations
+import json
 
 def read_data(src):
     data = []
@@ -111,23 +112,51 @@ def parse_data_mod(data):
 
 
 def main():
+    conn = dbo.db_connect()
     src_files = [f for f in os.listdir('data') if f[-1] in 'Xx']
     for src in src_files:
+        ###read in and parse excel data
         data = read_data(src)
         parsed_data = parse_data(data)  # list of tuples
-        conn = dbo.db_connect()
+
+        ##insert delivery.pickup data into 'data' table
         query = 'INSERT INTO data VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
         dbo.insert_query(conn, query, parsed_data, True)
+
+        ###get location data from google geocode api
+        ##read existing postal_codes
+        query="SELECT postcode FROM postal"
+        historized_pcs=[result[0] for result in dbo.select_query(conn,query)]
+
+        ##get postal_codes thats havent been historized already
+        postal_codes=list(set([data[-1] for data in parsed_data if data[-1] not in historized_pcs]))
+        location_data={postal_code:locations.get_location_data(postal_code) for postal_code in postal_codes}
+        location_dict=locations.parse_location_data(location_data)
+
+        ##insert new location data into 'postal' table
+        loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
+        query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
+        dbo.insert_query(conn, query, loc_data, True)
+
+    conn.close()
     return parsed_data
 
-if __name__ == '__main__':
-    main()
-# data=main()
-#
-# headers=['date', 'trans_type', 'route_desc', 'stop_type','source_type','driver', 'donor_id', 'arrive', 'depart', 'bread', 'baked', 'dairy', 'produce', 'protein', 'prepared', 'bev_juice', 'bev_other', 'snack', 'non_perish', 'non_food', 'quality', 'zero_lbs', 'postcode']
-# # headers=data.pop(0)
-# df=pd.DataFrame(data, columns=headers)
-# print(df.head())
+def loc_hist_test():
+    with open('loc_data.json', 'r') as fp:
+        location_dict = json.load(fp)
+
+    loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
+    query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
+    dbo.insert_query(conn, query, loc_data, True)
+
+    return
+
+# if __name__ == '__main__':
+#     main()
+
+
+
+
 # TO DO
 # raise exception if columns are not matching expected type
 # add instructions (i.e. info must be in sheet 0)

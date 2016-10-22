@@ -54,9 +54,3 @@ def parse_location_data(data): ##data is in form {postal_code:response_dict}
             location_data[postal_code]['locality']=None
 
     return location_data ##dictionary ready for historizing
-
-
-def historize_location_data(data): #data is the parsed excel data...
-    ##get list of unique postal codes..
-
-    return
