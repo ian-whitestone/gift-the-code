@@ -9,17 +9,20 @@ import subprocess
 import shlex
 import os
 
-from . import app, allowed_file
+from . import app, allowed_file, map_data
 # from . import query_db, db
-from .login import login_manager # THIS IS NEEDED
+from .login import login_manager  # THIS IS NEEDED
 
 
 SH_data = Blueprint('SH_data', __name__, template_folder='templates')
 ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
+
 class HomePage(MethodView):
+
     def get(self):
-        return render_template('home.html')
+        data = map_data.get_map_data()
+        return render_template('home.html', data=data)
 
 
 class FoodData(MethodView):
@@ -27,6 +30,7 @@ class FoodData(MethodView):
 
     def get(self):
         return render_template('food_data.html')
+
 
 class UploadData(MethodView):
     decorators = [login_required]
@@ -43,7 +47,6 @@ SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
 @app.route('/generate_report/', methods=["POST"])
 def generate_report():
     uid = current_user.id
-
 
     try:
         # do some stuff

@@ -5,10 +5,18 @@
 {% block page_header %}
 {% endblock %}
 
+
+
+
 {% block content %}
 
 <div align="center">
-    <img src="{{ url_for('static', filename='img/infographic.jpg') }}" style="max-height:50vh">
+    <script>
+        raw_data = {{ data | safe }}
+    </script>
+    <script src="{{ url_for('static', filename='js/d3_map.js')}}"></script>
 </div>
 
 {% endblock %}
+
+
