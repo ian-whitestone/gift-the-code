@@ -31,20 +31,74 @@
 
         /* ----------- Navbar Styles --------------- */
         .navbar {
-            background-color: transparent;
-            background: transparent;
+            background-color: white;
+            /*background: fixed;*/
             border-color: transparent;
-            padding: 20px 0 0 0;
+            padding: 20px 0 20px 0;
 			min-height: 50px;
+            font-size: 20px;
         }
 
-        .navbar li { color: #000 }
+        #navlogin a {
+            color: #6DB446;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        #navupload a {
+            color: #ed8c3e;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
 
 		body {
-			min-height: 2000px;
+			/*min-height: 1000px;*/
 			padding-top: 90px;
 		}
+
         /* ------------------------------------------------ */
+
+        h1 {
+            color: #6DB446;
+            margin: 20px 0 40px 0;
+            text-align: left;
+        }
+
+        /* ----------- Form Styles --------------- */
+        .form-control {
+            height: 50px;
+            font-size: 36px;
+            color: #6DB446;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            border: 0px;
+            box-shadow: none;
+        }
+
+        .form-control:focus{
+            box-shadow: none;
+        }
+
+        .form-control::-webkit-input-placeholder { color: #6DB446; opacity: 0.55;}
+        .form-control:-moz-placeholder { color: #6DB446; opacity: 0.55;}
+        .form-control::-moz-placeholder { color: #6DB446; opacity: 0.55;}
+        .form-control:-ms-input-placeholder { color: #6DB446; opacity: 0.55;}
+
+        .btn-primary{
+            background-color:#6db446;
+            border-color: #6db446;
+        }
+
+        .btn-primary:hover{
+            background-color:#55962d;
+            border-color: #55962d;
+        }
+
+        .btn{
+            padding: 5px 50px 5px 50px;
+            font-size: 30px;
+            border-radius: 0px;
+        }
 
         {% block style %}{% endblock %}
     </style>
@@ -74,10 +128,10 @@
             <!--</ul>-->
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
-                    <li><a href="#">Upload New Data</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <li id="navupload"><a href="#">Upload New Data</a></li>
+                    <li id="navlogin"><a href="/logout">Logout</a></li>
                 {% else %}
-                    <li><a href="/login">Login</a></li>
+                    <li id="navlogin"><a href="/login">Login</a></li>
                 {% endif %}
             </ul>
         </div>
