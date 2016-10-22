@@ -142,13 +142,14 @@ def main():
     return parsed_data
 
 def loc_hist_test():
+    conn = dbo.db_connect()
     with open('loc_data.json', 'r') as fp:
         location_dict = json.load(fp)
 
     loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
     query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
     dbo.insert_query(conn, query, loc_data, True)
-
+    conn.close()
     return
 
 # if __name__ == '__main__':
