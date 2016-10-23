@@ -97,10 +97,13 @@ h4 {
 
 <div class="guideline-box">
     <h1>Upload File Guidelines</h1>
-    <p><h4>Upload only new data</h4>
-        If your file contains previous data uploaded, the file will not merge properly.
+    <p><h4>Upload only complete data</h4>
+        If your file contains dates present in previous data uploaded, these entries will be delete from the database before the new data is inserted.
         <h4>Consistent format</h4>
         Please make sure the file that you're uploading is in the same format as previous years.</p>
+        <h4>File Names</h4>
+        All delivery data filenames <b>must start with "data"</b>.
+        All survey data filenames <b>must start with "survey"</b>. 
 </div>
 
 
@@ -116,7 +119,7 @@ $('#file-select').change(uploadFile);
 
 function uploadFile() {
     $('#overlay').show();
-    $('#filename_preview').text($('#file-select').val());
+    $('#filename_preview').text($('#file-select').val().lastIndexOf("\\"));
     $('#upload-form').submit();
 }
 

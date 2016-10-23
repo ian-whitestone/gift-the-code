@@ -90,6 +90,9 @@ def main(src):
     print("Reading data")
     data = read_data(src)
     parsed_data = parse_data(data)  # list of tuples
+    unique_dates = tuple(set([d[0] for d in parsed_data]))
+    dbo.execute_query(
+        conn, "DELETE FROM data where date in %s", (unique_dates,))
 
     # insert delivery.pickup data into 'data' table
     print("Importing data")
