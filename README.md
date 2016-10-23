@@ -50,7 +50,7 @@ In our first empathy interview with the SH team, Jennifer and Shane, we gathered
 
 ## <a name="solution_overview"></a>Solution Overview
 
-Our response to SH's needs is an integrated and semi-automated system which collects, processes and generates useful insights, while allowing for customisation and data exploration.
+Our [solution](http://ec2-52-87-205-105.compute-1.amazonaws.com:12345/) to SH's needs is an integrated and semi-automated system which collects, processes and generates useful insights, while allowing for customisation and data exploration.
 
 <p align="center">
 <img src=images/datamanagementflow-02.jpg alt="Solution Overview" style="width: 600px;" style="height: 600px;" />
