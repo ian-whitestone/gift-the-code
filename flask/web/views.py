@@ -11,6 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
+from . import data_import
 # from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
@@ -50,26 +51,31 @@ class GenerateReport(MethodView):
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
-SH_data.add_url_rule('/generate_report/', view_func=GenerateReport.as_view('GenerateReport'))
+SH_data.add_url_rule('/generate_report/',
+                     view_func=GenerateReport.as_view('GenerateReport'))
 
 
-@app.route('/upload_file/', methods=["GET","POST"])
+@app.route('/upload_file/', methods=["GET", "POST"])
 @login_required
 def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         ff = f.filename
-        print 'ff', f.filename
+        print('ff', f.filename)
 
-        filename = "{time}_{name}".format(time=datetime.now().strftime("%Y%m%d-%H%M%S"), name=ff)
-        print 'filename', filename
+        filename = "{time}_{name}".format(
+            time=datetime.now().strftime("%Y%m%d-%H%M%S"), name=ff)
+        print('filename', filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         try:
             f.save(filepath)
-            print 'uploaded to', filepath
+            print('uploaded to', filepath)
+            data_import.main(filepath)
+            print('data loaded successfully')
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
                          "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
+            return redirect('/')
     else:
         return redirect(url_for('SH_data.UploadData'))
