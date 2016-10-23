@@ -1,6 +1,10 @@
 # Gift the Code Hackathon - Second Harvest
 This repo is our submission for [Capital One's Gift the Code Hackathon](http://giftthecode.ca/)!
 
+<p align="center">
+  <img src=images/giftthecode.jpg alt="Sublime's custom image" style="width: 600px;" style="height: 200px;"/>
+</p>
+
 The details of the hackathon, the charity we worked for and our solution are provided below. Enjoy!
 
 - [The Charity](#the_charity)
