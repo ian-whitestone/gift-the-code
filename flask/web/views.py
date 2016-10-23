@@ -8,8 +8,10 @@ from werkzeug.exceptions import NotFound
 import subprocess
 import shlex
 import os
+from werkzeug.utils import secure_filename
 
-from . import app, allowed_file, map_data
+from . import app, allowed_file
+# from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
 
@@ -44,6 +46,7 @@ SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
 
 
 @app.route('/generate_report/', methods=["POST"])
+@login_required
 def generate_report():
     uid = current_user.id
 
@@ -56,22 +59,22 @@ def generate_report():
         return jsonify(result='Error')
 
 
-@app.route('/upload_file', methods=["POST"])
+@app.route('/upload_file/', methods=["GET","POST"])
+@login_required
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect('/')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-    return jsonify(result='yay')
+        f = request.files['file']
+        ff = f.filename
+        print 'ff', f.filename
+
+        filename = "{time}_{name}".format(time=datetime.now().strftime("%Y%m%d-%H%M%S"), name=ff)
+        print 'filename', filename
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        try:
+            f.save(filepath)
+            print 'uploaded to', filepath
+            return render_template('upload_success.html', ff=ff)
+        except:
+            flash('Could not upload file', 'danger')
+    else:
+        return redirect(url_for('SH_data.UploadData'))

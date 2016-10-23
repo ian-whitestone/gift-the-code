@@ -2,20 +2,23 @@
 
 {% block title %}Upload Data{% endblock %}
 
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
+{% endblock %}
+
 {% block style %}
 .upload-drop-zone {
     color: #ccc;
-    border-color: #ccc;
-    border-width: 2px;
-    border-style: dashed;
-    height: 200px;
+    border: 9px dashed #d7d7d7;
+    height: 50vh;
     margin-bottom: 20px;
     text-align: center;
     text-valign: center;
+    margin-top: 40px;
 }
 
 #drop-zone {
-	height:200px;
+	height:50vh;
     display: table;
     width: 100%;
 }
@@ -34,9 +37,30 @@
     outline: none;
     padding: 5px;
     border: 0px;
+    font-size: 24px;
+    font-weight: bold;
     box-sizing: none;
     background-color: transparent;
-    text-decoration: underline;
+    padding-top:0px;
+    padding-right: 7px;
+}
+
+.btn-link{
+    color: #6DB446;
+}
+
+.btn-link:hover{
+    color: #55962d;
+    text-decoration:none;
+}
+
+.guideline-box {
+    background-color: #f2f2f2;
+    padding: 40px 40px 40px 40px;
+}
+
+h4 {
+    padding: 15px 0 0px 0;
 }
 
 {% endblock %}
@@ -45,33 +69,36 @@
 
 {% block content %}
 
-<form action="/upload_file" method="post" enctype="multipart/form-data" id="upload-form">
-    <div class="upload-drop-zone" id="drop-zone">
-        <span>
-            <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
-            <br>
-            <h3>Drag and drop your file here</h3>
-            <br>
-            or
+<div class="upload-drop-zone" id="drop-zone">
+    <span>
+        <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
+        <br>
+        <h3>
             <label class="btn btn-default btn-file btn-link" id="upload-link">
-                select file from computer <input type="file" style="display: none;">
+                Choose a file
+                <form action="http://localhost:12345/upload_file/" method="POST" enctype="multipart/form-data" id="upload-form">
+                    <input type="file" id="file-select" name="file" accept=".xls,.xlsx" style="display: none;">
+                </form>
             </label>
-        </span>
-    </div>
-</form>
+            or drag it here
+        </h3>
+    </span>
+</div>
 
-<div class="jumbotron">
-    <h3>Guidelines</h3>
-    <p>blah blah files</p>
+<div class="guideline-box">
+    <h1>File Guidelines</h1>
+    <p><h4>Upload only new data</h4>
+        If your file contains previous data uploaded, the file will not merge properly.
+        <h4>Consistent format</h4>
+        Please make sure the file that you're uploading is in the same format as previous years.</p>
 </div>
 
 
 <script>
-$("#files").on("change", fileSelection);
+$('#file-select').change(uploadFile);
 
-function fileSelection(e) {
-    var files = e.target.files;
-    alert(files);
+function uploadFile() {
+    $('#upload-form').submit();
 }
 
 </script>
