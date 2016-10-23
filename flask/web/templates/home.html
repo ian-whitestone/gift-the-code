@@ -19,8 +19,6 @@
 
 {% block javascript %}
 
-<script>raw_data = {{ data | safe }}</script>
-
 <script src="{{ url_for('static', filename='js/d3_map.js')}}"></script>
 
 {% endblock %}

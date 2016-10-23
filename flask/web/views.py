@@ -21,8 +21,7 @@ ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 class HomePage(MethodView):
 
     def get(self):
-        data = map_data.get_map_data()
-        return render_template('home.html', data=data)
+        return render_template('home.html')
 
 
 class FoodData(MethodView):
