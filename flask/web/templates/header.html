@@ -24,6 +24,15 @@
 	{% block css %}{% endblock %}
 
 
+    <!-- jQuery library -->
+    <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	 -->
+
+    <!-- Bootstrap JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    {% block javascript %}{% endblock %}
+
+
     <!-- CUSTOM STYLE STUFF -->
     <style type="text/css">
         a {	text-decoration: none !important; }
@@ -164,15 +173,6 @@
 	{% block page_header %}{% endblock %}
 	{% block content %}{% endblock %}
 </div>
-
-
-<!-- jQuery library -->
-<script src="{{ url_for('static', filename='js/jquery-2.0.3.min.js') }}"></script>
-<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>	 -->
-
-<!-- Bootstrap JavaScript -->
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-{% block javascript %}{% endblock %}
 
 
 <script>
