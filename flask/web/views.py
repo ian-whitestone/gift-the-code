@@ -8,16 +8,21 @@ from werkzeug.exceptions import NotFound
 import subprocess
 import shlex
 import os
+from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
+from . import data_import
+# from . import map_data
 # from . import query_db, db
-from .login import login_manager # THIS IS NEEDED
+from .login import login_manager  # THIS IS NEEDED
 
 
 SH_data = Blueprint('SH_data', __name__, template_folder='templates')
 ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
+
 class HomePage(MethodView):
+
     def get(self):
         return render_template('home.html')
 
@@ -26,7 +31,16 @@ class FoodData(MethodView):
     decorators = [login_required]
 
     def get(self):
+        if request.method == 'POST':
+            neighborhood = 'Downtown'
+            query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighborhood = \'%s\'' % neighborhood
+            title = 'Delivery Report for %s' % neighborhood
+            output_path = 'web/static/data/report_%s.html' % neighborhood
+            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
         return render_template('food_data.html')
+
 
 class UploadData(MethodView):
     decorators = [login_required]
@@ -35,41 +49,47 @@ class UploadData(MethodView):
         return render_template('upload_data.html')
 
 
+class GenerateReport(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('generate_report.html')
+
+
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
+SH_data.add_url_rule('/generate_report/',
+                     view_func=GenerateReport.as_view('GenerateReport'))
 
 
-@app.route('/generate_report/', methods=["POST"])
-def generate_report():
-    uid = current_user.id
-
-
-    try:
-        # do some stuff
-        return jsonify(result='Success')
-    except Exception as e:
-        flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
-                     "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
-        return jsonify(result='Error')
-
-
-@app.route('/upload_file', methods=["POST"])
+@app.route('/upload_file/', methods=["GET", "POST"])
+@login_required
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
+        f = request.files['file']
+        ff = f.filename
+        print('ff', f.filename)
+
+        filename = "{time}_{name}".format(
+            time=datetime.now().strftime("%Y%m%d-%H%M%S"), name=ff)
+        print('filename', filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        try:
+            f.save(filepath)
+            print('uploaded to', filepath)
+            data_import.main(filepath)
+            print('data loaded successfully')
+            query = 'SELECT * FROM data'
+            title = 'Delivery Report'
+            output_path = 'web/static/data/report_full.html'
+            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
+            return render_template('upload_success.html', ff=ff)
+        except Exception as e:
+            flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
+                         "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
             return redirect('/')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
-    return jsonify(result='yay')
+    else:
+        return redirect(url_for('SH_data.UploadData'))

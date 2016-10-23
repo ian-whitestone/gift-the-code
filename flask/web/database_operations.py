@@ -39,7 +39,7 @@ def execute_query(conn, query, data=False):
     return
 
 
-def select_query(conn, query, data=False):
+def select_query(conn, query, data=False, colnames=False):
     cur = conn.cursor()
     if data:  # data is a single tuple
         if not isinstance(data, tuple):
@@ -49,9 +49,13 @@ def select_query(conn, query, data=False):
     else:
         cur.execute(query)
         resultset = cur.fetchall()
-    colnames = [desc[0] for desc in cur.description]
-    cur.close()
-    return resultset,colnames
+    if colnames:
+        colnames = [desc[0] for desc in cur.description]
+        cur.close()
+        return resultset, colnames
+    else:
+        cur.close()
+        return resultset
 
 
 def parse_date(s):

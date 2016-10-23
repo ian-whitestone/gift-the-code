@@ -1,9 +1,11 @@
 import xlrd
 import os
 import datetime
-import database_operations as dbo
-import locations
+from . import database_operations as dbo
+from . import map_data
+from . import locations
 import json
+
 
 def read_data(src):
     data = []
@@ -82,38 +84,44 @@ def parse_data(data):
     return data3
 
 
-def main():
+def main(src):
     conn = dbo.db_connect()
-    src_files = [f for f in os.listdir('data') if f[-1] in 'Xx']
-    for src in src_files:
-        ###read in and parse excel data
-        data = read_data(src)
-        parsed_data = parse_data(data)  # list of tuples
+    # read in and parse excel data
+    print("Reading data")
+    data = read_data(src)
+    parsed_data = parse_data(data)  # list of tuples
 
-        # ##insert delivery.pickup data into 'data' table
-        # query = 'INSERT INTO data VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-        # dbo.insert_query(conn, query, parsed_data, True)
+    # insert delivery.pickup data into 'data' table
+    print("Importing data")
+    query = 'INSERT INTO data VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+    dbo.insert_query(conn, query, parsed_data, True)
 
-        ###get location data from google geocode api
-        ##read existing postal_codes
-        query="SELECT postcode FROM postal"
-        historized_pcs=[result[0] for result,colnames in dbo.select_query(conn,query)]
+    # get location data from google geocode api
+    # read existing postal_codes
+    query = "SELECT postcode FROM postal"
+    historized_pcs = [result[0]
+                      for result in dbo.select_query(conn, query)]
 
-        ##get postal_codes thats havent been historized already
-        postal_codes=list(set([data[-1] for data in parsed_data if data[-1] not in historized_pcs]))
-        location_data={postal_code:locations.get_location_data(postal_code) for postal_code in postal_codes}
-        location_dict=locations.parse_location_data(location_data)
+    # get postal_codes thats havent been historized already
+    postal_codes = list(
+        set([data[-1] for data in parsed_data if data[-1] not in historized_pcs]))
+    location_data = {postal_code: locations.get_location_data(
+        postal_code) for postal_code in postal_codes}
+    location_dict = locations.parse_location_data(location_data)
 
-        ##insert new location data into 'postal' table
-        if location_dict:
-            loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
-            query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
-            dbo.insert_query(conn, query, loc_data, True)
-            print('%s records historized' % len(loc_data.keys()))
-        else:
-            print ('nuttin historized')
+    # insert new location data into 'postal' table
+    if location_dict:
+        loc_data = [(k, v['longitude'], v['latitude'], v['neighborhood'], v[
+            'locality']) for k, v in location_dict.items()]
+        query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
+        dbo.insert_query(conn, query, loc_data, True)
+        print('%s records historized' % len(loc_data.keys()))
+    else:
+        print('nuttin historized')
+    data = map_data.get_map_data()
+    json.dump(data, open('web/static/data/map_data.json', 'w'))
     conn.close()
-    return parsed_data
+    return
 
 
 def loc_hist_test():
@@ -121,7 +129,8 @@ def loc_hist_test():
     with open('loc_data.json', 'r') as fp:
         location_dict = json.load(fp)
 
-    loc_data=[(k,v['longitude'],v['latitude'],v['neighborhood'],v['locality']) for k,v in location_dict.items()]
+    loc_data = [(k, v['longitude'], v['latitude'], v['neighborhood'], v[
+                 'locality']) for k, v in location_dict.items()]
     query = 'INSERT INTO postal VALUES (%s,%s,%s,%s,%s)'
     dbo.insert_query(conn, query, loc_data, True)
     conn.close()
@@ -129,8 +138,6 @@ def loc_hist_test():
 
 if __name__ == '__main__':
     main()
-
-
 
 
 # TO DO

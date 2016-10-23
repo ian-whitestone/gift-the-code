@@ -2,13 +2,24 @@
 
 {% block title %}Home{% endblock %}
 
+
+
+
+
 {% block page_header %}
 {% endblock %}
 
 {% block content %}
-
-<div align="center">
-    <img src="{{ url_for('static', filename='img/infographic.jpg') }}" style="max-height:50vh">
+<div style="width: 100%; margin:auto;">
+    <h1 style="margin-top: 50px;"> This year, we rescued 1,235,449 lbs of food from across Toronto, moving it to places and communities in need.</h1>
 </div>
+<div style='margin:auto' id="slider"></div>
+</div>
+<div class='container-fluid' style="padding-left:0px">
+    <div style="width: 100%; padding-left:0px" id="canvas"></div>
+    <script src="{{ url_for('static', filename='js/d3_map.js')}}"></script>
+    
+{% endblock %}
+{% block javascript %}
 
 {% endblock %}
