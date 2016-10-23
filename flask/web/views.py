@@ -11,7 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
-from . import data_import
+from . import data_import, import_survey
 # from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
@@ -30,16 +30,15 @@ class HomePage(MethodView):
 class FoodData(MethodView):
     decorators = [login_required]
 
-    def get(self):
-        if request.method == 'POST':
-            neighborhood = 'Downtown'
-            query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighborhood = \'%s\'' % neighborhood
-            title = 'Delivery Report for %s' % neighborhood
-            output_path = 'web/static/data/report_%s.html' % neighborhood
-            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
-                query, title, output_path)
-            subprocess.call(['Rscript', '-e', render_call])
-        return render_template('food_data.html')
+    def get(self, report_id=None):
+        neighbourhoods = ['Downtown', 'Parkdale', 'West Hill', 'Rexdale', 'Midtown Toronto', 'Jane and Finch', 'Glen Park', 'Flemingdon Park', 'Riverdale', 'Don Mills', 'Eatonville', 'Dovercourt Park',
+                          'Trinity - Bellwoods', 'The Elms', 'Cliffcrest', 'Birch Cliff', 'Weston', 'Woodbine Heights', 'Dufferin Grove', 'Riverside', 'Victoria Village', 'L\'Amoreaux', 'Newtonbrook']
+        if report_id:
+            report = "data/%s.html" % report_id
+        else:
+            report = "data/report_full.html"
+        url = url_for('static', filename=report)
+        return render_template('food_data.html', url=url)
 
 
 class UploadData(MethodView):
@@ -49,18 +48,11 @@ class UploadData(MethodView):
         return render_template('upload_data.html')
 
 
-class GenerateReport(MethodView):
-    decorators = [login_required]
-
-    def get(self):
-        return render_template('generate_report.html')
-
-
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
+SH_data.add_url_rule('/data/<report_id>/',
+                     view_func=FoodData.as_view('CustomReport'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
-SH_data.add_url_rule('/generate_report/',
-                     view_func=GenerateReport.as_view('GenerateReport'))
 
 
 @app.route('/upload_file/', methods=["GET", "POST"])
@@ -78,12 +70,15 @@ def upload_file():
         try:
             f.save(filepath)
             print('uploaded to', filepath)
-            data_import.main(filepath)
+            if filename.lower().startswith('data'):
+                data_import.main(filepath)
+            elif filename.lower().startswith('survey'):
+                import_survey.import_data(filepath)
             print('data loaded successfully')
             query = 'SELECT * FROM data'
-            title = 'Delivery Report'
+            title = 'Annual Report'
             output_path = 'web/static/data/report_full.html'
-            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+            render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
                 query, title, output_path)
             subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
@@ -93,3 +88,26 @@ def upload_file():
             return redirect('/')
     else:
         return redirect(url_for('SH_data.UploadData'))
+
+
+@app.route('/generate_report/')
+@login_required
+def generate_report():
+    nh = request.args.get('nh')
+    if nh == "All Neighbourhoods":
+        return redirect('/data/')
+
+    try:
+        query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighbourhood = \'%s\'' % nh
+        title = 'Delivery Report for %s' % nh
+        output_path = 'web/static/data/report_%s.html' % nh
+        render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+            query, title, output_path)
+        subprocess.call(['Rscript', '-e', render_call])
+        # return redirect(url_for('SH_data.FoodData', report_id=output_path))
+        url = '/data/report_%s' % nh
+        return jsonify(result='Success', report=url)
+    except Exception as e:
+        flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
+                     "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
+        return jsonify(result='Failed')
