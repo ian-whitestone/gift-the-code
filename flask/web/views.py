@@ -63,7 +63,7 @@ def upload_file():
         ff = f.filename
         print('ff', f.filename)
 
-        filename = "{time}_{name}".format(
+        filename = "{name}_{time}".format(
             time=datetime.now().strftime("%Y%m%d-%H%M%S"), name=ff)
         print('filename', filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)

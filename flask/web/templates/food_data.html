@@ -6,7 +6,7 @@
 #overlay {
     background: #ffffff;
     color: #666666;
-    position: fixed;
+    position: absolute;
     height: 50%;
     min-height: 350px;
     width: 75%;
@@ -19,6 +19,10 @@
     padding-top: 5%;
     border: 5px solid #d7d7d7;
 }
+
+.holder {
+    position: relative;
+}
 {% endblock %}
 
 {% block page_header %}{% endblock %}
@@ -27,9 +31,10 @@
 
 <!--<h3>Second Harvest Food Data</h3>-->
 {% if request.url_rule.endpoint=='SH_data.FoodData' %}
-<div id="filter" style="padding-top:10px" align="center">
+<div id="filter" style="padding-top:10px; padding-left:10px" align="center">
     <form class="form-horizontal">
         <div class="form-group">
+            <div class="col-md-1"></div>
             <div class="col-md-6">
                 <!--<label for="nh-select">Filter by Neighbourhood (hold shift to select more than one):</label>-->
                 <select class="form-control" id="nh-select">
@@ -69,23 +74,24 @@
 </div>
 {% endif %}
 
-<!--<div id="report">-->
-    <iframe src="{{ url }}" frameborder="0" height="85%" width="100%"
+<div class="holder">
+    <iframe id="report_iframe" src="{{ url }}" frameborder="0" height="85%" width="100%"
     style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:85%;width:100%;position:fixed;top:150px;left:0px;right:0px;bottom:-150px;" >
     </iframe>
-<!--</div>-->
 
 
-<div id="overlay" align="center" style="display:none;">
-    <h1 style="text-align:center">Generating Report...</h1>
-    <!--<h3 id="filename_preview"></h3>-->
-    <img src="{{ url_for('static', filename='img/loading_truck.gif') }}" style="width:75%"/>
+
+    <div id="overlay" align="center" style="display:none;">
+        <h1 style="text-align:center">Generating Report...</h1>
+        <!--<h3 id="filename_preview"></h3>-->
+        <img src="{{ url_for('static', filename='img/loading_truck.gif') }}" style="width:75%"/>
+    </div>
 </div>
-
 
 <script>
 $('#filter_btn').on('click', function() {
     //alert('clicked!!!');
+    $('#report_iframe').hide();
     $('#overlay').show();
     $.getJSON('/generate_report/', {
 		nh: $('#nh-select').val()
