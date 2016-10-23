@@ -63,12 +63,24 @@ h4 {
     padding: 15px 0 0px 0;
 }
 
+#overlay {
+    background: #ffffff;
+    color: #666666;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+}
 {% endblock %}
 
 {% block page_header %}{% endblock %}
 
 {% block content %}
-
 <div class="upload-drop-zone" id="drop-zone">
     <span>
         <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
@@ -76,7 +88,7 @@ h4 {
         <h3>
             <label class="btn btn-default btn-file btn-link" id="upload-link">
                 Choose a file
-                <form action="http://localhost:12345/upload_file/" method="POST" enctype="multipart/form-data" id="upload-form">
+                <form action="/upload_file/" method="POST" enctype="multipart/form-data" id="upload-form">
                     <input type="file" id="file-select" name="file" accept=".xls,.xlsx" style="display: none;">
                 </form>
             </label>
@@ -94,11 +106,24 @@ h4 {
 </div>
 
 
+<div id="overlay" align="center" style="display:none;">
+    <h1 style="text-align:center">Uploading...</h1>
+    <br>
+    <img src="{{ url_for('static', filename='img/loading_truck.gif') }}" style="width:75%"/>
+</div>
+
+
 <script>
 $('#file-select').change(uploadFile);
 
 function uploadFile() {
-    $('#upload-form').submit();
+    $('#overlay').show();
+    setTimeout(
+        function(){
+            $('#upload-form').submit();
+        },
+        3000  // wait 3 seconds so the gif shows :)
+    );
 }
 
 </script>

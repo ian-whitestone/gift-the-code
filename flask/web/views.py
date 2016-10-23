@@ -40,23 +40,17 @@ class UploadData(MethodView):
         return render_template('upload_data.html')
 
 
+class GenerateReport(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('generate_report.html')
+
+
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
-
-
-@app.route('/generate_report/', methods=["POST"])
-@login_required
-def generate_report():
-    uid = current_user.id
-
-    try:
-        # do some stuff
-        return jsonify(result='Success')
-    except Exception as e:
-        flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
-                     "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
-        return jsonify(result='Error')
+SH_data.add_url_rule('/generate_report/', view_func=GenerateReport.as_view('GenerateReport'))
 
 
 @app.route('/upload_file/', methods=["GET","POST"])
@@ -74,7 +68,8 @@ def upload_file():
             f.save(filepath)
             print 'uploaded to', filepath
             return render_template('upload_success.html', ff=ff)
-        except:
-            flash('Could not upload file', 'danger')
+        except Exception as e:
+            flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
+                         "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
     else:
         return redirect(url_for('SH_data.UploadData'))
