@@ -46,6 +46,9 @@
             padding: 20px 0 20px 0;
 			min-height: 50px;
             font-size: 20px;
+            -webkit-box-shadow: 0 8px 6px -6px #EBF4E5;
+            -moz-box-shadow: 0 8px 6px -6px #EBF4E5;
+            box-shadow: 0 8px 6px -6px #EBF4E5;
         }
 
         #navlogin a,
@@ -63,7 +66,6 @@
         }
 
 		body {
-			/*min-height: 1000px;*/
 			padding-top: 90px;
 		}
 
@@ -71,7 +73,7 @@
 
         h1 {
             color: #6DB446;
-            margin: 20px 0 40px 0;
+            margin: 0px 0 20px 0;
             text-align: left;
         }
 
@@ -121,7 +123,7 @@
 
 <nav id="topNav" class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-        <div class="navbar-header">
+        <div class="navbar-header" id="navlogin" >
             <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">-->
                 <!--<span class="sr-only">Toggle</span>-->
                 <!--<span class="icon-bar"></span>-->
@@ -129,14 +131,16 @@
                 <!--<span class="icon-bar"></span>-->
             <!--</button>-->
             <a href="/">
-                <img src="{{ url_for('static', filename='img/second-harvest-logo.png') }}" style="height:50px">
+                <img src="{{ url_for('static', filename='img/second-harvest-logo.png') }}" style="height:50px;">
+                MangoViz
             </a>
+
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-            <!--<ul class="nav navbar-nav">-->
-                <!--<li>&nbsp;&nbsp;&nbsp;</li>-->
-                <!--<li id="fooddata-tab"><a href="{{ url_for('SH_data.FoodData') }}">Food Data</a></li>-->
-            <!--</ul>-->
+<!--             <ul class="nav navbar-nav">
+                <li>&nbsp;&nbsp;&nbsp;</li>
+                <li id="fooddata-tab"><a href="{{ url_for('SH_data.FoodData') }}">MongoViz</a></li>
+            </ul> -->
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
                     {% if request.url_rule.endpoint=='SH_data.FoodData' %}
