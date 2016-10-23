@@ -11,7 +11,11 @@ import os
 from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
+<<<<<<< HEAD
 from . import data_import
+=======
+from . import data_import, import_survey
+>>>>>>> master
 # from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
@@ -69,7 +73,14 @@ def upload_file():
         try:
             f.save(filepath)
             print('uploaded to', filepath)
+<<<<<<< HEAD
             data_import.main(filepath)
+=======
+            if filename.lower().startswith('data'):
+                data_import.main(filepath)
+            elif filename.lower().startswith('survey'):
+                import_survey.import_data(filepath)
+>>>>>>> master
             print('data loaded successfully')
             query = 'SELECT * FROM data'
             title = 'Delivery Report'
