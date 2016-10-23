@@ -11,11 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
-<<<<<<< HEAD
-from . import data_import
-=======
 from . import data_import, import_survey
->>>>>>> master
 # from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
@@ -73,21 +69,11 @@ def upload_file():
         try:
             f.save(filepath)
             print('uploaded to', filepath)
-<<<<<<< HEAD
             data_import.main(filepath)
-=======
             if filename.lower().startswith('data'):
                 data_import.main(filepath)
             elif filename.lower().startswith('survey'):
                 import_survey.import_data(filepath)
->>>>>>> master
-            print('data loaded successfully')
-            query = 'SELECT * FROM data'
-            title = 'Delivery Report'
-            output_path = 'web/static/data/report_full.html'
-            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
-                query, title, output_path)
-            subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
