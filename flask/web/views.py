@@ -55,9 +55,11 @@ class GenerateReport(MethodView):
 
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
-SH_data.add_url_rule('/data/<report_id>/', view_func=FoodData.as_view('CustomReport'))
+SH_data.add_url_rule('/data/<report_id>/',
+                     view_func=FoodData.as_view('CustomReport'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
-SH_data.add_url_rule('/generate_report/', view_func=GenerateReport.as_view('GenerateReport'))
+SH_data.add_url_rule('/generate_report/',
+                     view_func=GenerateReport.as_view('GenerateReport'))
 
 
 @app.route('/upload_file/', methods=["GET", "POST"])
@@ -77,6 +79,12 @@ def upload_file():
             print('uploaded to', filepath)
             # data_import.main(filepath)
             print('data loaded successfully')
+            query = 'SELECT * FROM data'
+            title = 'Delivery Report'
+            output_path = 'web/static/data/report_full.html'
+            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
