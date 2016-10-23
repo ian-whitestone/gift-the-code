@@ -26,7 +26,7 @@ The details of the hackathon, the charity we worked for and our solution are pro
 
 <br/>
 
-[Second Harvest](http://www.secondharvest.ca/) (SH) is a food rescue program based out of Toronto,Ontario that picks up donated or surplus food, which would otherwise go to waste, and deliver that food to community agencies across Toronto and the Greater Toronto Area
+[Second Harvest](http://www.secondharvest.ca/) (SH) is a food rescue program based out of Toronto, Ontario that picks up donated or surplus food, which would otherwise go to waste, and deliver that food to community agencies across Toronto and the Greater Toronto Area
 
 <br/>
 
