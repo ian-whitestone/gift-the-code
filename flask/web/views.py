@@ -34,7 +34,7 @@ class FoodData(MethodView):
         if report_id:
             report = "data/{}.html".format(report_id)
         else:
-            report = "data/test_report.html"
+            report = "data/report_full.html"
         url = url_for('static', filename=report)
         return render_template('food_data.html', url=url)
 
@@ -82,12 +82,12 @@ def upload_file():
             elif filename.lower().startswith('survey'):
                 import_survey.import_data(filepath)
             print('data loaded successfully')
-            query = 'SELECT * FROM data'
-            title = 'Delivery Report'
-            output_path = 'web/static/data/report_full.html'
-            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
-                query, title, output_path)
-            subprocess.call(['Rscript', '-e', render_call])
+        query = 'SELECT * FROM data'
+        title = 'Annual Report'
+        output_path = 'web/static/data/report_full.html'
+        render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+            query, title, output_path)
+        subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
