@@ -110,7 +110,7 @@ As we prepare for a deep dive into the intricacies of our app, our first order o
 <br/>
 <br/>
 
-Now that you are *properly equipped*, let's plunge in....to the [website](http://ec2-52-87-205-105.compute-1.amazonaws.com:12345/)
+Now that you are *properly equipped*, let's **PLUNGE** in....to the [website](http://ec2-52-87-205-105.compute-1.amazonaws.com:12345/)
 <br/>
 <br/>
 <br/>
