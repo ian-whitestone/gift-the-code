@@ -61,13 +61,13 @@
 
 <script>
 $('#filter_btn').on('click', function() {
-    alert('clicked!!!');
+    //alert('clicked!!!');
     $.getJSON('/generate_report/', {
 		nh: $('#nh-select').val()
 	}, function(data) {
 		result = data.result;
 		if (result == 'Success') {
-            //alert(data.report);
+            alert(data.report);
             window.location.href = data.report;
 		} else {
 			window.location.reload();
