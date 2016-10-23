@@ -2,7 +2,9 @@
 
 {% block title %}Upload Data{% endblock %}
 
-<!-- {% block head%}<script src=".//dropzone.js"></script>{% endblock %} -->
+{% block javascript %}
+    <script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
+{% endblock %}
 
 {% block style %}
 .upload-drop-zone {
@@ -67,17 +69,21 @@ h4 {
 
 {% block content %}
 
-<form action="/upload_file" method="post" enctype="multipart/form-data" id="upload-form">
-    <div class="upload-drop-zone" id="drop-zone">
-        <span>
-            <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
-            <br>
-            <h3>
-                <label class="btn btn-default btn-file btn-link" id="upload-link">Choose a file 
-                    <input type="file" style="display: none;"></label>or drag it here</h3>
-        </span>
-    </div>
-</form>
+<div class="upload-drop-zone" id="drop-zone">
+    <span>
+        <i class="fa fa-upload fa-4x" style="color:lightgray;"></i>
+        <br>
+        <h3>
+            <label class="btn btn-default btn-file btn-link" id="upload-link">
+                Choose a file
+                <form action="http://localhost:12345/upload_file" method="POST" enctype="multipart/form-data" id="upload-form">
+                    <input type="file" id="file-select" name="file" style="display: none;">
+                </form>
+            </label>
+            or drag it here
+        </h3>
+    </span>
+</div>
 
 <div class="guideline-box">
     <h1>File Guidelines</h1>
@@ -89,11 +95,10 @@ h4 {
 
 
 <script>
-$("#files").on("change", fileSelection);
+$('#file-select').change(uploadFile);
 
-function fileSelection(e) {
-    var files = e.target.files;
-    alert(files);
+function uploadFile() {
+    $('#upload-form').submit();
 }
 
 </script>

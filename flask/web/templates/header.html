@@ -20,6 +20,14 @@
 
     <!-- FontAwesome CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome-4.6.3/css/font-awesome.min.css') }}" />
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/d3.geo.tile.v0.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/d3.slider.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/d3.slider.css')}}"></script>
+    <script src="{{ url_for('static', filename='js/d3.tip.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='js/d3.slider.css')}}" ></script>
+
 
 	{% block css %}{% endblock %}
 
@@ -112,6 +120,96 @@
             font-size: 30px;
             border-radius: 0px;
         }
+        
+        text {font: 10px sans-serif;}
+
+        body {
+        /*margin: 0;*/
+        }
+
+        #points{
+            width:100%;
+            height:100%;
+            position:relative;
+            z-index:100;
+        }
+
+        #container {
+        position: relative;
+        overflow: hidden;
+            background: #ddd;
+        }
+
+        .map {
+        position: relative;
+        overflow: hidden;
+        }
+
+        .layer {
+        position: absolute;
+        }
+
+        .tile {
+        pointer-events: none;
+        position: absolute;
+        width: 256px;
+        height: 256px;
+        }
+
+        .postcode{
+            opacity: 0.6;
+            /*fill: black; fill is now defined based on infraction code*/
+        }
+
+        .postcode:hover{
+            opacity: 0.4;
+            fill: #ff8a00;
+        }
+
+        .info {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        }
+
+
+        .d3-tip {
+        line-height: 1.5;
+        font-weight: bold;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size:13px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 3px;
+            position:relative;
+            z-index:101;
+        }
+
+        /* Creates a small triangle extender for the tooltip */
+        .d3-tip:after {
+        box-sizing: border-box;
+        display: inline;
+        font-size: 20px;
+        width: 100%;
+        line-height: .5;
+        color: rgba(0, 0, 0, 0.8);
+        content: "\25BC";
+        position: absolute;
+        text-align: center;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+        margin: -1px 0 0 0;
+        top: 100%;
+        left: 0;
+        }
+
+        /*#slider {
+        /*margin: 20px 0 10px 20px;*/
+        width: 1325px;
+        } */
 
         {% block style %}{% endblock %}
     </style>
