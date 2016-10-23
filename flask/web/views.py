@@ -11,7 +11,7 @@ import os
 from werkzeug.utils import secure_filename
 
 from . import app, allowed_file
-from . import data_import
+# from . import data_import
 # from . import map_data
 # from . import query_db, db
 from .login import login_manager  # THIS IS NEEDED
@@ -30,16 +30,13 @@ class HomePage(MethodView):
 class FoodData(MethodView):
     decorators = [login_required]
 
-    def get(self):
-        if request.method == 'POST':
-            neighborhood = 'Downtown'
-            query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighborhood = \'%s\'' % neighborhood
-            title = 'Delivery Report for %s' % neighborhood
-            output_path = 'web/static/data/report_%s.html' % neighborhood
-            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
-                query, title, output_path)
-            subprocess.call(['Rscript', '-e', render_call])
-        return render_template('food_data.html')
+    def get(self, report_id=None):
+        if report_id:
+            report = "data/{}.html".format(report_id)
+        else:
+            report = "data/test_report.html"
+        url = url_for('static', filename=report)
+        return render_template('food_data.html', url=url)
 
 
 class UploadData(MethodView):
@@ -58,6 +55,8 @@ class GenerateReport(MethodView):
 
 SH_data.add_url_rule('/', view_func=HomePage.as_view('home'))
 SH_data.add_url_rule('/data/', view_func=FoodData.as_view('FoodData'))
+SH_data.add_url_rule('/data/<report_id>/',
+                     view_func=FoodData.as_view('CustomReport'))
 SH_data.add_url_rule('/upload/', view_func=UploadData.as_view('UploadData'))
 SH_data.add_url_rule('/generate_report/',
                      view_func=GenerateReport.as_view('GenerateReport'))
@@ -78,7 +77,7 @@ def upload_file():
         try:
             f.save(filepath)
             print('uploaded to', filepath)
-            data_import.main(filepath)
+            # data_import.main(filepath)
             print('data loaded successfully')
             query = 'SELECT * FROM data'
             title = 'Delivery Report'
