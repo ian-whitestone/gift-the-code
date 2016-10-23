@@ -31,6 +31,14 @@ class FoodData(MethodView):
     decorators = [login_required]
 
     def get(self):
+        if request.method == 'POST':
+            neighborhood = 'Downtown'
+            query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighborhood = \'%s\'' % neighborhood
+            title = 'Delivery Report for %s' % neighborhood
+            output_path = 'web/static/data/report_%s.html' % neighborhood
+            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
         return render_template('food_data.html')
 
 
@@ -72,6 +80,12 @@ def upload_file():
             print('uploaded to', filepath)
             data_import.main(filepath)
             print('data loaded successfully')
+            query = 'SELECT * FROM data'
+            title = 'Delivery Report'
+            output_path = 'web/static/data/report_full.html'
+            render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
