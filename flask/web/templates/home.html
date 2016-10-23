@@ -22,6 +22,12 @@
   	border-radius: 15px;
   	background: #5293B8;
 }
+
+h3, p{
+	color:#999999;
+}
+
+
 {% endblock %}
 
 
@@ -31,10 +37,12 @@
 {% block content %}
 <div style="text-align: center; width: 100%; margin: 50px auto auto auto;">
     <h1>Food Rescue Map</h1>
-    <h3 style="color: #999999">An interactive map that displays the amount of food rescued each year by Second Harvest.</h3>
+    <h3>An interactive map that displays the amount of food rescued each year by Second Harvest.</h3>
     <br>
-    <i class="fa fa-circle fa-3x" style="color:#FF8D00;"></i>
-    <i class="fa fa-circle fa-3x" style="color:#5293B8;"></i>
+    <p>
+    <i class="fa fa-circle fa-3x "style="color:#FF8D00;vertical-align: middle;"></i>&nbsp; Donor &nbsp; &nbsp; &nbsp; &nbsp;
+    <i class="fa fa-circle fa-3x "style="color:#5293B8;vertical-align: middle;"></i>&nbsp; Receiver
+    </p>
 </div>
 <div style='margin:auto' id="slider"></div>
 </div>
