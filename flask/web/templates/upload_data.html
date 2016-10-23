@@ -117,12 +117,7 @@ $('#file-select').change(uploadFile);
 function uploadFile() {
     $('#overlay').show();
     $('#filename_preview').text($('#file-select').val());
-    setTimeout(
-        function(){
-            $('#upload-form').submit();
-        },
-        3000  // wait 3 seconds so the gif shows :)
-    );
+    $('#upload-form').submit();
 }
 
 </script>

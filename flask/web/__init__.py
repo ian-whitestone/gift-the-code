@@ -9,9 +9,11 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "dLAFKioehrgg219372TRGE032u"
 
 ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
-UPLOAD_FOLDER = os.path.join(ROOT_PATH, 'data')
+UPLOAD_FOLDER = os.path.join(ROOT_PATH, 'flask/web/static/data')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = ['xls', 'xlsx']
+print(UPLOAD_FOLDER)
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -54,11 +56,12 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
+
 @app.template_filter()
 @evalcontextfilter
 def nl2br(eval_ctx, value):
-    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n') \
-        for p in _paragraph_re.split(escape(value)))
+    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n')
+                          for p in _paragraph_re.split(escape(value)))
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
