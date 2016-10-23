@@ -98,7 +98,8 @@ def generate_report():
         return redirect('/data/')
 
     try:
-        query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighbourhood = \'%s\'' % nh
+        query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighbourhood = \'%s\'' % nh.replace(
+            "'", "''")
         title = 'Delivery Report for %s' % nh
         output_path = 'web/static/data/report_%s.html' % nh
         render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (

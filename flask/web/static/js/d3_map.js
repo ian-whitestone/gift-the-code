@@ -62,7 +62,7 @@ var tip = d3.tip()
               "Type: " + d.stop_type + "</span>" + "<br />" + "<span>" +
               "Total Food: $" + num_format(d.total*2.5) + "</span>" + "<br />" + "<span>" +
               "Avg Nutrient Ratio: " + Math.round(d.nutrient_ratio*100)/100 + "</span>" + "<br />" + "<span>" +
-              "Avg Perishable Ratio: " + Math.round(d.perishable_ratio*100)/100 + "</span>";
+              "Avg Perishable Ratio: " + 1 - Math.round(d.perishable_ratio*100)/100 + "</span>";
     // return "<span style='color:black'>" + d.street_address + "</span>";
   });
 
