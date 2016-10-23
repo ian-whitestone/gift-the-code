@@ -11,15 +11,67 @@
 
 <!--<h3>Second Harvest Food Data</h3>-->
 
+<div id="filter" style="padding-top:10px" align="center">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-6">
+                <!--<label for="nh-select">Filter by Neighbourhood (hold shift to select more than one):</label>-->
+                <select class="form-control" id="nh-select">
+                    <option selected>All Neighbourhoods</option>
+                    <option>Downtown</option>
+                    <option>Parkdale</option>
+                    <option>West Hill</option>
+                    <option>Rexdale</option>
+                    <option>Midtown Toronto</option>
+                    <option>Jane and Finch</option>
+                    <option>Glen Park</option>
+                    <option>Flemingdon Park</option>
+                    <option>Riverdale</option>
+                    <option>Don Mills</option>
+                    <option>Eatonville</option>
+                    <option>Dovercourt Park</option>
+                    <option>Trinity - Bellwoods</option>
+                    <option>The Elms</option>
+                    <option>Cliffcrest</option>
+                    <option>Birch Cliff</option>
+                    <option>Weston</option>
+                    <option>Woodbine Heights</option>
+                    <option>Dufferin Grove</option>
+                    <option>Riverside</option>
+                    <option>Victoria Village</option>
+                    <option>L'Amoreaux</option>
+                    <option>Newtonbrook</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary" id="filter_btn">
+                    Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <!--<div id="report">-->
     <iframe src="{{ url }}" frameborder="0" height="85%" width="100%"
-    style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:85%;width:100%;position:fixed;top:90px;left:0px;right:0px;bottom:-90px;" >
+    style="overflow:hidden;overflow-x:hidden;overflow-y:hidden;height:85%;width:100%;position:fixed;top:150px;left:0px;right:0px;bottom:-150px;" >
     </iframe>
 <!--</div>-->
 
 
 <script>
-$(document).ready(function() {
+$('#filter_btn').on('click', function() {
+    $.getJSON('/generate_report/', {
+		nh: $('#nh-select').val()
+	}, function(data) {
+		result = data.result;
+		if (result == 'Success') {
+            console.log('success!!');
+		} else {
+			window.location.reload();
+		}
+	});
+	return false;
 });
 
 </script>
