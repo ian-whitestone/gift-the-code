@@ -61,6 +61,7 @@
 
 <script>
 $('#filter_btn').on('click', function() {
+    alert('clicked!!!');
     $.getJSON('/generate_report/', {
 		nh: $('#nh-select').val()
 	}, function(data) {

@@ -95,10 +95,10 @@ def upload_file():
 def generate_report():
     nh = request.args.get('nh')
     try:
-        query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighborhood = \'%s\'' % nh
+        query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighbourhood = \'%s\'' % nh
         title = 'Delivery Report for %s' % nh
         output_path = 'web/static/data/report_%s.html' % nh
-        render_call = "rmarkdown::render(\"test_report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+        render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
             query, title, output_path)
         subprocess.call(['Rscript', '-e', render_call])
         return redirect(url_for('SH_data.FoodData', report_id=output_path))
