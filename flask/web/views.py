@@ -34,7 +34,7 @@ class FoodData(MethodView):
         neighbourhoods = ['Downtown', 'Parkdale', 'West Hill', 'Rexdale', 'Midtown Toronto', 'Jane and Finch', 'Glen Park', 'Flemingdon Park', 'Riverdale', 'Don Mills', 'Eatonville', 'Dovercourt Park',
                           'Trinity - Bellwoods', 'The Elms', 'Cliffcrest', 'Birch Cliff', 'Weston', 'Woodbine Heights', 'Dufferin Grove', 'Riverside', 'Victoria Village', 'L\'Amoreaux', 'Newtonbrook']
         if report_id:
-            report = "data/%s" % report_id
+            report = "data/%s.html" % report_id
         else:
             report = "data/report_full.html"
         url = url_for('static', filename=report)
@@ -105,7 +105,7 @@ def generate_report():
             query, title, output_path)
         subprocess.call(['Rscript', '-e', render_call])
         # return redirect(url_for('SH_data.FoodData', report_id=output_path))
-        url = '/data/report_%s.html' % nh
+        url = '/data/report_%s' % nh
         return jsonify(result='Success', report=url)
     except Exception as e:
         flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
