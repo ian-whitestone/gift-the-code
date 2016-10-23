@@ -155,8 +155,13 @@ A snapshot of the base analytics package is shown below.
 <br/>
 
 ### <a name="tech_stack"></a>Tech Stack
-
 An overview of the various technologies we used is provided below.
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 <p align="center">
   <img src=images/techdiagram.jpg alt="Tech Stack" style="width: 600px;" style="height: 600px;" />
@@ -188,7 +193,9 @@ More info can be found @ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/laun
 * **Kevin Seto** - *Graphic Designer Student @ OCAD*
 * **Lucy Chen** - *Interaction Designer @ Veeva*
 * **Ian Whitestone** - *Data Scientist @ Capital One*
-
+<br/>
+<br/>
+<br/>
 ### <a name="questions"></a>Questions?
 
 Feel free to email: ianjameswhitestone@gmail.com or darrenlin17@gmail.com for questions.
