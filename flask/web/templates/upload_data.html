@@ -116,7 +116,7 @@ $('#file-select').change(uploadFile);
 
 function uploadFile() {
     $('#overlay').show();
-    $('#filename_preview').text($('#file-select').val());
+    $('#filename_preview').text($('#file-select').val().lastIndexOf("\\"));
     $('#upload-form').submit();
 }
 
