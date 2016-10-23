@@ -67,7 +67,8 @@ $('#filter_btn').on('click', function() {
 	}, function(data) {
 		result = data.result;
 		if (result == 'Success') {
-            console.log('success!!');
+            //alert(data.report);
+            window.location.href = data.report;
 		} else {
 			window.location.reload();
 		}

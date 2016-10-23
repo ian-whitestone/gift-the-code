@@ -94,6 +94,9 @@ def upload_file():
 @login_required
 def generate_report():
     nh = request.args.get('nh')
+    if nh == "All Neighbourhoods":
+        return redirect('/data/')
+    
     try:
         query = 'SELECT a.* FROM data a join postal b on a.postcode = b.postcode WHERE neighbourhood = \'%s\'' % nh
         title = 'Delivery Report for %s' % nh
@@ -102,6 +105,8 @@ def generate_report():
             query, title, output_path)
         subprocess.call(['Rscript', '-e', render_call])
         return redirect(url_for('SH_data.FoodData', report_id=output_path))
+        url = '/data/report_%s.html' % nh
+        return jsonify(result='Success', report=url)
     except Exception as e:
         flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
                      "<b>{error}:</b> {msg}".format(error=type(e).__name__, msg=str(e))), 'danger')
