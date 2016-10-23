@@ -110,7 +110,7 @@ As we prepare for a deep dive into the intricacies of our app, our first order o
 <br/>
 <br/>
 
-Now that you are properly equipped, let's continue....
+Now that you are *properly equipped*, let's continue....
 <br/>
 <br/>
 <br/>
