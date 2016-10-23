@@ -5,15 +5,20 @@
 {% block page_header %}
 {% endblock %}
 
+
 {% block content %}
-<div style="width: 75%; margin:auto;">
-	<i class="fa fa-check-circle" aria-hidden="true"></i> &nbsp; Upload Successful
+<div align="center" style="padding-top: 10%;">
+	<h1>
+	<i class="fa fa-check-circle" aria-hidden="true"></i>  Upload Successful
+	</h1>
+    <h3> {{ ff }} </h3>
     <br>
-    {{ ff }}
     <br>
-    <a href="/generate_report/" class="btn btn-primary" style="margin: 6px 12px 6px 12px">Generate Reports</a>
+    <a href="/data/" class="btn btn-primary" style="margin: 6px 12px 6px 12px">View Reports</a>
     <br>
-    or <a href="/upload/" id="btnCancel">upload another file</a>
+    <h3>
+    	<a href="/upload/" id="btnCancel">or upload another file</a>
+    </h3>
 </div>
 
 {% endblock %}

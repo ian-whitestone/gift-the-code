@@ -5,13 +5,36 @@
 
 
 
+{% block style %}
+#circle-donor{
+	width: 30px;
+	height: 30px;
+    -webkit-border-radius: 15px;
+  	-moz-border-radius: 15px;
+  	border-radius: 15px;
+  	background: #FF8D00;
+}
+#circle-receiver{
+	width: 30px;
+	height: 30px;
+    -webkit-border-radius: 15px;
+  	-moz-border-radius: 15px;
+  	border-radius: 15px;
+  	background: #5293B8;
+}
+{% endblock %}
+
 
 {% block page_header %}
 {% endblock %}
 
 {% block content %}
-<div style="width: 100%; margin:auto;">
-    <h1 style="margin-top: 50px;"> This year, we rescued 1,235,449 lbs of food from across Toronto, moving it to places and communities in need.</h1>
+<div style="text-align: center; width: 100%; margin: 50px auto auto auto;">
+    <h1>Food Rescue Map</h1>
+    <h3 style="color: #999999">An interactive map that displays the amount of food rescued each year by Second Harvest.</h3>
+    <br>
+    <i class="fa fa-circle fa-3x" style="color:#FF8D00;"></i>
+    <i class="fa fa-circle fa-3x" style="color:#5293B8;"></i>
 </div>
 <div style='margin:auto' id="slider"></div>
 </div>

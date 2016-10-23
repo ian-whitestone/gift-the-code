@@ -31,7 +31,8 @@ class FoodData(MethodView):
     decorators = [login_required]
 
     def get(self, report_id=None):
-        neighbourhoods = ['Downtown', 'Parkdale', 'West Hill', 'Rexdale', 'Midtown Toronto', 'Jane and Finch', 'Glen Park', 'Flemingdon Park', 'Riverdale', 'Don Mills', 'Eatonville', 'Dovercourt Park', 'Trinity - Bellwoods', 'The Elms', 'Cliffcrest', 'Birch Cliff', 'Weston', 'Woodbine Heights', 'Dufferin Grove', 'Riverside', 'Victoria Village', 'L\'Amoreaux', 'Newtonbrook']
+        neighbourhoods = ['Downtown', 'Parkdale', 'West Hill', 'Rexdale', 'Midtown Toronto', 'Jane and Finch', 'Glen Park', 'Flemingdon Park', 'Riverdale', 'Don Mills', 'Eatonville', 'Dovercourt Park',
+                          'Trinity - Bellwoods', 'The Elms', 'Cliffcrest', 'Birch Cliff', 'Weston', 'Woodbine Heights', 'Dufferin Grove', 'Riverside', 'Victoria Village', 'L\'Amoreaux', 'Newtonbrook']
         if report_id:
             url = report_id
         else:
@@ -69,11 +70,17 @@ def upload_file():
         try:
             f.save(filepath)
             print('uploaded to', filepath)
-            data_import.main(filepath)
             if filename.lower().startswith('data'):
                 data_import.main(filepath)
             elif filename.lower().startswith('survey'):
                 import_survey.import_data(filepath)
+            print('data loaded successfully')
+            query = 'SELECT * FROM data'
+            title = 'Annual Report'
+            output_path = 'web/static/data/report_full.html'
+            render_call = "rmarkdown::render(\"report.Rmd\", params=list(query=\"%s\", title=\"%s\"), output_file = \"%s\")" % (
+                query, title, output_path)
+            subprocess.call(['Rscript', '-e', render_call])
             return render_template('upload_success.html', ff=ff)
         except Exception as e:
             flash(Markup("Uh oh! Something went wrong. Please check your inputs again or contact an Admin.<br>"
