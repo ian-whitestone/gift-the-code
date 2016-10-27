@@ -26,7 +26,7 @@ The details of the hackathon, the charity we worked for and our solution are pro
 
 <br/>
 
-[Second Harvest](http://www.secondharvest.ca/) (SH) is a food rescue program based out of Toronto,Ontario that picks up donated or surplus food, which would otherwise go to waste, and deliver that food to community agencies across Toronto and the Greater Toronto Area
+[Second Harvest](http://www.secondharvest.ca/) (SH) is a food rescue program based out of Toronto, Ontario that picks up donated or surplus food, which would otherwise go to waste, and deliver that food to community agencies across Toronto and the Greater Toronto Area.
 
 <br/>
 
@@ -110,7 +110,7 @@ As we prepare for a deep dive into the intricacies of our app, our first order o
 <br/>
 <br/>
 
-Now that you are *properly equipped*, let's continue....
+Now that you are *properly equipped*, let's **PLUNGE** in....to the [website](http://ec2-52-87-205-105.compute-1.amazonaws.com:12345/)
 <br/>
 <br/>
 <br/>
