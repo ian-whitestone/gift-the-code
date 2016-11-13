@@ -1,0 +1,185 @@
+---
+title: '`r params$title`'
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
+    fig_width: 9
+params:
+  title:
+    value: "Title"
+  query:
+    value: "select * from data where substr(postcode, 1, 3) = 'M5A'"
+---
+
+```{r setup, message=FALSE, results='hide', echo=FALSE , warning=FALSE}
+library(RPostgreSQL)
+library(data.table)
+library(magrittr)
+library(lubridate)
+library(ggplot2)
+library(DT)
+source('dlin.R')
+
+options(datatable.print.nrows=1000, width=120)
+
+drv = dbDriver('PostgreSQL')
+conn = dbConnect(drv, dbname='postgres')
+d = dbGetQuery(conn, params$query) %>% setDT
+postal = dbReadTable(conn, 'postal') %>% setDT
+
+
+d[, date := parse_date_time(date, '%Y-%m-%d')]
+d[, arrive := ymd_hms(paste(date, arrive, sep=' '))]
+d[, depart := ymd_hms(paste(date, depart, sep=' '))]
+d[, fiscal_year := year(date + days(120))]
+
+most_recent_fy = max(d$fiscal_year)
+fyname = paste0('FY', substr(most_recent_fy, 3, 4))
+
+idv = c('date', 'trans_type', 'route_desc', 'stop_type', 'source_type', 'driver', 'donor_id', 'arrive', 'depart', 'quality', 'zero_lbs', 'postcode', 'fiscal_year')
+mav = c('bread', 'baked', 'dairy', 'produce', 'protein', 'prepared', 'bev_juice', 'bev_other', 'snack', 'non_perish', 'non_food')
+
+dmelt = melt(d, variable.name = 'food_type', value.name = 'amount', id.vars = idv, measure.vars = mav)[amount > 0]
+dmelt[, fsa := substr(postcode, 1, 3)]
+
+top_types = dmelt[stop_type == 'Delivery' & fiscal_year == most_recent_fy, sum(amount), by=food_type][
+  ,V2 := V1 / sum(V1)][order(-V1)][, value := V1 * 2.5]
+
+top_types[, food_type := as.character(food_type)]
+top_types[, high_nutrient := FALSE]
+top_types[food_type %in% c('dairy','protein','produce'), high_nutrient := TRUE]
+
+survey = dbReadTable(conn, 'survey') %>% setDT
+setkey(survey, donor_id)
+setkey(d, donor_id)
+setkey(dmelt, donor_id)
+nps_names = c("nps_office", "nps_driver", "nps_agency", "nps_workshop", "crucial_to_success", "healthy_and_nutritious", "diverse", "expanded_programs", "more_opportunities")
+
+survey = survey[donor_id %in% unique(d[,donor_id])] ##merge survey data
+
+
+##Survey Data - Graphs and Charts
+
+nps_table=survey[, list(var = colnames(.SD), lapply(.SD, mean)), .SDcols = nps_names]
+nps_table[,survey_score:=round(as.numeric(V2)*100,0)]
+nps_table[,V2:=NULL]
+
+
+survey[,total:=clients*perc_provided]
+survey[,children:=total*children_perc]
+survey[,youth:=total*youth_perc]
+survey[,men:=total*men_perc]
+survey[,women:=total*women_perc]
+survey[,seniors:=total*senior_perc]
+
+dfr=survey[order(-total)][1:10,.(donor_id,total,children,youth,men,women,seniors)]
+mdfr=melt(dfr[,.(donor_id,children,youth,men,women,seniors)], id.vars = "donor_id")
+setnames(mdfr,old=c('variable','value'),new=c('demographic','count'))
+
+survey_table=survey[,.(donor_id,total,children,youth,men,women,seniors)][order(-total)]
+survey_table[,(colnames(survey_table)) := round(.SD,0), .SDcols=colnames(survey_table)]
+
+```
+
+## Delivery Data
+
+Partner organisations rely on SH's consistency in delivering substantial amount of food. We assume the average value of $2.50 / lbs of food.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+dmelt[, sum(amount * 2.5 / 1e6), by=.(floor_date(date, unit='quarter'), stop_type)] %>% 
+  ggplot(aes(x = floor_date, y = V1, col=stop_type)) + geom_line() + geom_point() +
+  labs(title = 'Total Value of Food Delivered by Quarter', x = 'Date',
+       y = 'Dollar Value ($M)') + theme_dlin()
+```
+
+----------
+
+Second Harvest leverages its logistics expertise to maximise the coordination and delivery of fresh quality food. It focuses on following 2 KPIs to ensure that partners receive these types of food which are more difficult to acquire.
+
+- % of perishable food: bread, baked, dairy, produce, protein, prepared
+- % of high-nutrient food: dairy, produce, protein
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+d[, .( Perishable = sum(bread + baked + dairy + produce + protein + prepared + bev_juice + bev_other + snack) / 
+    sum(bread + baked + dairy + produce + protein + prepared + bev_juice + bev_other + snack + non_perish + non_food),
+    `High Nutrient` = sum(dairy + produce + protein) / 
+      sum(bread + baked + dairy + produce + protein + prepared + bev_juice + bev_other + snack + non_perish + non_food)), 
+  by=.(floor_date(date, unit='quarter'), stop_type)] %>% 
+  melt(id.vars = 1:2, measure.vars = 3:4) %>% 
+  ggplot(aes(x = floor_date, y = value, col = variable)) + 
+  facet_grid(~stop_type) + geom_line() + geom_point() + 
+  labs(title = 'Ratios', col = NULL, x = 'Month', y = NULL) + theme_dlin()
+
+```
+
+----------
+
+Second Harvest can more easily monitor and assign distribution to maximise the food diversity for all neighbourhoods and recipients. This also helps Second Harvest to better communicate its needs and priorities to the donors.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(top_types, aes(x = food_type, weight = value / 1e3, fill = high_nutrient)) + 
+  geom_bar() + theme_dlin() + scale_x_discrete(limits = top_types$food_type) +
+  geom_text(aes(y = value / 2e3, label = sprintf('$%.1fK\n(%.1f%%)', value / 1e3, V2 * 100))) + 
+  theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) + 
+  labs(x = 'Type of Food', y = 'Value of Donations ($M)', 
+       title = paste0('Types of Food Donated for ', fyname),
+       fill = 'High Nutrient')
+
+datatable(top_types[,.(`Food Type` = food_type, `Total Value` = value, `Percent of Deliveries` = V2, `Pounds of Food` = V1)],
+          options = list(pageLength=25)) %>% formatPercentage(3, 1) %>% formatCurrency(2, '$')
+```
+
+----------
+
+The following summarises the amount of food delivered for each day of the week, and each hour of the day. This historical view should assist in forecasting the food amount and delivery capacity.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+day_order = c('Sun','Mon','Tue','Wed','Thu','Fri','Sat')
+
+dmelt[, sum(amount), by=.(stop_type, weekdays(date, abbreviate = T), hour(arrive))] %>% 
+  ggplot(aes(weekdays, hour)) + 
+  geom_tile(aes(fill = V1), col = 'white', size=1.1) + theme_dlin() +
+  scale_x_discrete(expand = c(0, 0), limits=day_order) + 
+  scale_y_reverse(breaks=seq(8,19,4)) +
+  labs(title = 'Pickup and Delivery Times', x = 'Day of Week', 
+       y = 'Hour of Day', fill = 'Pounds') + 
+  facet_grid(~stop_type) + theme(panel.margin = unit(2, "lines")) +
+  scale_fill_distiller(palette = 'Oranges', direction = 1)
+
+```
+
+------------
+
+## Survey Data
+
+Second Harvest would like to better know the people it serves: number of people as well as their demographic group.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+ggplot(nps_table,aes(x=var,y=survey_score, fill=survey_score)) +
+  geom_bar(stat = "identity") + theme_dlin() + theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) +
+  theme(legend.position='None') + 
+  geom_text(aes(y = survey_score / 2, label = survey_score)) + 
+  labs(x = 'Survey Variable', y = 'Net Promoter Score', title = 'Second Harvest Survey Results') +
+  scale_fill_distiller(palette = "Oranges", direction = 1)
+
+```
+
+------------
+
+To achieve the common goal of feeding people in need, Second Harvest ensures the best possible relationships between all its partners: donors, organisations, truckers, volunteers and agencies. The following illustrates the satisfaction with each of the partners as well as the value SH provides to them. SH should be able to identify opportunities in specific neighbourhoods or partner organisation.
+Add Comment
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(mdfr,aes(x = factor(donor_id), y = count,fill=demographic)) + scale_x_discrete(limits = as.character(dfr$donor_id)) +
+  geom_bar(stat = "identity") + theme_dlin() + theme(axis.text.x=element_text(angle=45, vjust=1, hjust=1)) + 
+  labs(x = 'Donor ID', y = '# of Clients', title = 'Who Needs Second Harvest the Most?') + 
+  scale_fill_brewer(palette = "Pastel1")
+
+datatable(survey_table) 
+```
+
