@@ -71,51 +71,7 @@ Our [solution](http://ec2-52-87-205-105.compute-1.amazonaws.com:12345/) to SH's 
 
 <br/>
 
-## <a name="deep_dive"></a>A Deep Dive...
-
-As we prepare for a deep dive into the intricacies of our app, our first order of business is.....
-<br/>
-...
-<br/>
-....
-<br/>
-.....
-<br/>
-......
-<br/>
-.......
-<br/>
-.........
-<br/>
-...........
-<br/>
-..............
-<br/>
-..................
-<br/>
-.......................
-
-
-<p align="center">
-  <img src=images/suitup.jpg alt="Suit up" style="width: 800px;" style="height: 800px;" />
-
-</p>
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-Now that you are *properly equipped*, let's **PLUNGE** in....to the [website](http://ec2-52-201-226-141.compute-1.amazonaws.com:12345/)
-<br/>
-<br/>
-<br/>
-<br/>
-
+## <a name="deep_dive"></a>Deep Dive
 ### <a name="website"></a>Website
 
 The landing page of the website features a interactive data vizualization for all of SH's delivery and pickup data. The bubbles are colour coded according to whether they represent a pickup or a delivery. A slider is present at the top, allowing the user to switch between different yearly views of the data.
