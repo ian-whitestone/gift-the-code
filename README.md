@@ -177,11 +177,8 @@ To maximize the ease of utilization for Second Harvest, we have created a snapsh
 
 More info can be found @ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/launch-more-like-this.html
 
-[The team](#the_team) can be consulted for any deployment questions.
+The team can be consulted for any deployment questions.
 
-<br/>
-<br/>
-<br/>
 ## <a name="the_team"></a>The Team
 
 * **Darren Lin** - *Data Scientist @ Capital One*
